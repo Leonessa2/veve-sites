@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/visite.mjs   (FICHIER NEUF — lot J)
+// ⚠️ Leonessa2/veve-sites — engine/lib/visite.mjs   (FICHIER NEUF — lot J)
 // ═══════════════════════════════════════════════════════════════════════════
 // « DEPUIS VOTRE DERNIÈRE VISITE » — une date, et elle se lit AVANT de s'écrire
 // ═══════════════════════════════════════════════════════════════════════════

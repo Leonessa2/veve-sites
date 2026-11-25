@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/_dom_banc.mjs   (FICHIER NEUF — lot 133)
+// ⚠️ Leonessa2/veve-sites — engine/tools/_dom_banc.mjs   (FICHIER NEUF — lot 133)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE DOM DES BANCS — les correctifs d'instrument, écrits UNE fois
 // ═══════════════════════════════════════════════════════════════════════════

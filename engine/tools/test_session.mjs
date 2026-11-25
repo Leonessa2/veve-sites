@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_session.mjs  (FICHIER NEUF, lot 90)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_session.mjs  (FICHIER NEUF, lot 90)
 //
 //     npm run test:session
 //

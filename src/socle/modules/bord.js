@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/bord.js   (FICHIER NEUF — lot J)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/bord.js   (FICHIER NEUF — lot J)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PILOTE DU TABLEAU DE BORD — il ADDITIONNE, il ne DEMANDE rien
 // ═══════════════════════════════════════════════════════════════════════════

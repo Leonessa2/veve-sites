@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/supprimer.js  (FICHIER NEUF, lot 98)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/supprimer.js  (FICHIER NEUF, lot 98)
 // ═══════════════════════════════════════════════════════════════════════════
 // SUPPRIMER SON COMPTE — le seul geste de ce site qui détruit quelque chose.
 // ═══════════════════════════════════════════════════════════════════════════

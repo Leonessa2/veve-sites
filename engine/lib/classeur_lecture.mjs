@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/classeur_lecture.mjs   (FICHIER NEUF — lot N ⑪)
+// ⚠️ Leonessa2/veve-sites — engine/lib/classeur_lecture.mjs   (FICHIER NEUF — lot N ⑪)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LIRE CE QU'UN PORTEFEUILLE DÉTIENT, DEPUIS LA RÉSERVE DU CLASSEUR
 // ═══════════════════════════════════════════════════════════════════════════

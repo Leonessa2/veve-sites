@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/classeur.js  (NEUF — lot 224)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/classeur.js  (NEUF — lot 224)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PILOTE DES DEUX PAGES DU CLASSEUR — inventaire, et Mint Hunter
 // ═══════════════════════════════════════════════════════════════════════════

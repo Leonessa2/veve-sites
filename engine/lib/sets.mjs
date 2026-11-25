@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/sets.mjs   (FICHIER NEUF — lot N)
+// ⚠️ Leonessa2/veve-sites — engine/lib/sets.mjs   (FICHIER NEUF — lot N)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LES SETS — UNE PAGE `/collection/` = UN SET DE VeVe, CLÉ `series_uuid`
 // ═══════════════════════════════════════════════════════════════════════════
@@ -90,7 +90,7 @@ export function exigerColonneSets(cat) {
     + 'pages /collection/ (une page = un set, lot N) n\'a pas sa clé. Build '
     + 'interrompu VOLONTAIREMENT : servir l\'ancien découpage ferait changer '
     + '~3 000 adresses au gré des releases. Vérifier la release `catalogue` de '
-    + 'fanablefrance/jetonveve (scrapeur-veve `b0aeedf` ou postérieur).');
+    + 'Leonessa2/jetonveve (scrapeur-veve `b0aeedf` ou postérieur).');
 }
 
 /** L'ancienne clé (lot 71) — gardée UNIQUEMENT pour la continuité des

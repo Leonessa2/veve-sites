@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/astro_extremes.mjs  (FICHIER NEUF — lot 157)
+// ⚠️ Leonessa2/veve-sites — engine/lib/astro_extremes.mjs  (FICHIER NEUF — lot 157)
 // ═══════════════════════════════════════════════════════════════════════════
 // L'intégration qui dépose le classement d'amplitude dans `.reserve/`
 // ═══════════════════════════════════════════════════════════════════════════

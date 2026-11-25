@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/caisse.js   (FICHIER NEUF — lot 200)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/caisse.js   (FICHIER NEUF — lot 200)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA PORTE DE LA CAISSE — ouvrir une commande, puis suivre son état
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_fuite_prix.mjs
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_fuite_prix.mjs
 // ═══════════════════════════════════════════════════════════════════════════
 // LE BANC ANTI-FUITE — il lit `dist/`, pas le code
 // ═══════════════════════════════════════════════════════════════════════════

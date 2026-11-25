@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/55-langue.js   (FICHIER NEUF — lot 139)
+// ⚠️ Leonessa2/veve-sites — src/socle/55-langue.js   (FICHIER NEUF — lot 139)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE SÉLECTEUR DE LANGUE D'INTERFACE, SUR LES PAGES PUBLIQUES
 // ═══════════════════════════════════════════════════════════════════════════

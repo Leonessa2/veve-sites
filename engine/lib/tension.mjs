@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/tension.mjs   (FICHIER NEUF — lot 219)
+// ⚠️ Leonessa2/veve-sites — engine/lib/tension.mjs   (FICHIER NEUF — lot 219)
 // ═══════════════════════════════════════════════════════════════════════════
 // LA TENSION DE L'OFFRE — une note calculée, SANS AUCUN PRIX.
 // ═══════════════════════════════════════════════════════════════════════════

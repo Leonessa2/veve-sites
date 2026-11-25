@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/palier_vu.mjs  (FICHIER NEUF — lot 187)
+// ⚠️ Leonessa2/veve-sites — engine/lib/palier_vu.mjs  (FICHIER NEUF — lot 187)
 // ═══════════════════════════════════════════════════════════════════════════
 // 🔴🔴🔴 « VOIR COMME » : REGARDER LE SITE AVEC LES YEUX D'UN AUTRE PALIER
 // ═══════════════════════════════════════════════════════════════════════════

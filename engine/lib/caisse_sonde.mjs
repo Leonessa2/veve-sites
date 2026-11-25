@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/caisse_sonde.mjs   (FICHIER NEUF — lot 199)
+// ⚠️ Leonessa2/veve-sites — engine/lib/caisse_sonde.mjs   (FICHIER NEUF — lot 199)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA SONDE DE LA CAISSE — « ce conteneur peut-il lire le réseau Base ? »
 // ═══════════════════════════════════════════════════════════════════════════

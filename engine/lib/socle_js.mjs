@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/socle_js.mjs   (NEUF — lot 137, A2 / OPT‑3)
+// ⚠️ Leonessa2/veve-sites — engine/lib/socle_js.mjs   (NEUF — lot 137, A2 / OPT‑3)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE JAVASCRIPT SORT DU HTML — UN FICHIER, UNE FOIS, POUR 3 097 PAGES
 // ═══════════════════════════════════════════════════════════════════════════

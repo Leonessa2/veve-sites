@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_fraicheur.mjs   (FICHIER NEUF — lot 144)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_fraicheur.mjs   (FICHIER NEUF — lot 144)
 // ═══════════════════════════════════════════════════════════════════════════
 // L'INVARIANT DE FRAICHEUR — il lit `dist/`, et il COMPTE
 // ═══════════════════════════════════════════════════════════════════════════

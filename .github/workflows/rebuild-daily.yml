@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/veve-sites  ·  CHEMIN : .github/workflows/rebuild-daily.yml
+# ⚠️ DEPOT : Leonessa2/veve-sites  ·  CHEMIN : .github/workflows/rebuild-daily.yml
 #
 # Reconstruction quotidienne de VEVEPRICE.
 #
@@ -33,7 +33,7 @@ on:
   schedule:
     # ⭐ CE CRON N'EST PLUS LE DECLENCHEUR PRINCIPAL, C'EST LE FILET.
     # Le declencheur normal est l'evenement `prix-prets`, envoye par
-    # price-history (fanablefrance/jetonveve) des que la release `prices-full`
+    # price-history (Leonessa2/jetonveve) des que la release `prices-full`
     # est publiee. Sans ce chainage, les 30 minutes d'ecart entre 07:11 et
     # 07:41 suffisaient a faire reconstruire les sites sur les prix de la
     # veille des que l'ordonnanceur derivait — et rien ne le signalait.

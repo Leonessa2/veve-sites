@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ⚠️ CE FICHIER VA DANS LE DEPOT VeVePreda/veve-sites, dans engine/tools/
+# ⚠️ CE FICHIER VA DANS LE DEPOT Leonessa2/veve-sites, dans engine/tools/
 """Audit SEO du site construit.
 
 RACINE A PASSER EN ARGUMENT : `dist` en mode static, `dist/client` en mode

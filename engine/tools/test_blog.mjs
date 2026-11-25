@@ -1,7 +1,7 @@
 // =============================================================================
 //  test_blog.mjs — preuve que le blog HYBRIDE (Sheet + Markdown) se comporte
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/tools/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/tools/
 //     (chemin exact : engine/tools/test_blog.mjs)
 //
 //      npm run test:blog

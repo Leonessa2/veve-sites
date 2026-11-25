@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/seuils.mjs   (FICHIER NEUF — lot 139)
+// ⚠️ Leonessa2/veve-sites — engine/lib/seuils.mjs   (FICHIER NEUF — lot 139)
 // ═══════════════════════════════════════════════════════════════════════════
 //  L'ÉCHELLE DE SEUILS DU RÉSEAU — DÉCLARÉE UNE FOIS, TENUE PAR UN CLIQUET
 // ═══════════════════════════════════════════════════════════════════════════

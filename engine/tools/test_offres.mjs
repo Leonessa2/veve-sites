@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_offres.mjs   (FICHIER NEUF — lot 171)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_offres.mjs   (FICHIER NEUF — lot 171)
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA COURBE DES OFFRES — point `v` de l'audit du 14/08/2026

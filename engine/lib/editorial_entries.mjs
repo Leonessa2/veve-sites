@@ -1,7 +1,7 @@
 // =============================================================================
 //  editorial_entries.mjs — LES FICHES : une page par ENTITÉ, plus une par liste
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/editorial_entries.mjs)
 //
 //  LE PROBLÈME QU'IL RÉSOUT

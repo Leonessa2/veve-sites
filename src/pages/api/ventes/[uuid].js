@@ -1,4 +1,4 @@
-// ⚠️ DEPOT : VeVePreda/veve-sites
+// ⚠️ DEPOT : Leonessa2/veve-sites
 // 🔴 CHEMIN EXACT DANS LE DEPOT :  src/pages/api/ventes/[uuid].js
 //    (le nom livré ici s'appelle `CROCHET-uuid` parce que Windows refuse les
 //     crochets dans un nom de fichier — À RENOMMER EN `[uuid].js` AU DÉPÔT.)

@@ -1,7 +1,7 @@
 // =============================================================================
 //  langues.mjs — UNE SECTION PAR LANGUE : la couverture de traduction MESURÉE
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/langues.mjs)
 //
 //  LE PROBLÈME QU'IL RÉSOUT

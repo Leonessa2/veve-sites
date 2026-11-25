@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/marche_selection.mjs   (FICHIER NEUF — lot 155-C)
+// ⚠️ Leonessa2/veve-sites — engine/lib/marche_selection.mjs   (FICHIER NEUF — lot 155-C)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA SÉLECTION DU MARCHÉ — FILTRER, TRIER ET TRANCHER **AU SERVEUR**
 // ═══════════════════════════════════════════════════════════════════════════

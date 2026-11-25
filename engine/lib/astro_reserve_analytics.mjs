@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/astro_reserve_analytics.mjs  (NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/lib/astro_reserve_analytics.mjs  (NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 // L'intégration qui écrit les dérivés du grand livre dans `.reserve/analytics/`
 // ═══════════════════════════════════════════════════════════════════════════

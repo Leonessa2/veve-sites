@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_caisse.mjs   (FICHIER NEUF — lot 199)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_caisse.mjs   (FICHIER NEUF — lot 199)
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE BANC DE LA SONDE DE CAISSE — il juge l'INSTRUMENT, pas le réseau

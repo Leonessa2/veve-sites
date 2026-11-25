@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/search-index.json.js
+// ⚠️ Leonessa2/veve-sites — src/pages/search-index.json.js
 //
 // Index de recherche du réseau. Une seule route, servie à la racine, consommée
 // par `fetch('/search-index.json')` côté navigateur (Home.astro pour les sites

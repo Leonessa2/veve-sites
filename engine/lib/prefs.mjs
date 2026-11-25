@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/prefs.mjs   (FICHIER NEUF — lot 154-B)
+// ⚠️ Leonessa2/veve-sites — engine/lib/prefs.mjs   (FICHIER NEUF — lot 154-B)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE MAGASIN DES PRÉFÉRENCES DE COMPTE — la fondation, pas une fonctionnalité
 // ═══════════════════════════════════════════════════════════════════════════

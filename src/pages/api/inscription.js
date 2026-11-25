@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/inscription.js
+// ⚠️ Leonessa2/veve-sites — src/pages/api/inscription.js
 // ═══════════════════════════════════════════════════════════════════════════
 // LE RELAIS — lot 90, 06/08/2026. Avant : une route qui refusait honnêtement.
 // ═══════════════════════════════════════════════════════════════════════════

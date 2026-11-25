@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/index_rayon.js   (FICHIER NEUF — lot 155-B)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/index_rayon.js   (FICHIER NEUF — lot 155-B)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE CHARGEUR D'INDEX DE RAYON — UN SEUL, POUR LES DEUX PILOTES
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/reglages.js  (FICHIER NEUF — lot 160-A)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/reglages.js  (FICHIER NEUF — lot 160-A)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES RÉGLAGES DU MEMBRE — pour l'instant, un seul : la newsletter
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,6 +1,6 @@
 // =============================================================================
 //  test_fiches.mjs — le garde-fou des FICHES (une page par entité)
-//  ⚠️ VeVePreda/veve-sites — engine/tools/test_fiches.mjs
+//  ⚠️ Leonessa2/veve-sites — engine/tools/test_fiches.mjs
 //      SITE=vevewiki npm run test:fiches
 //
 //  Ce qui se casse ici ne fait échouer AUCUN build : un lien de voisine vers une

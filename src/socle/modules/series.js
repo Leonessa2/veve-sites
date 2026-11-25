@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/series.js   (FICHIER NEUF — lot 139)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/series.js   (FICHIER NEUF — lot 139)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE PILOTE DE `/sets/` — FILTRER, TRIER, COMPTER, ET **TRANCHER**
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/vignettes.mjs   (FICHIER NEUF — lot 154-A)
+// ⚠️ Leonessa2/veve-sites — engine/lib/vignettes.mjs   (FICHIER NEUF — lot 154-A)
 // ═══════════════════════════════════════════════════════════════════════════
 // 🖼️ L'INDEX DES VIGNETTES — « uuid → de quoi dessiner une tuile »
 // ═══════════════════════════════════════════════════════════════════════════

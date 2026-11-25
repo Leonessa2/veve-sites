@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/vitrine.mjs
+// ⚠️ Leonessa2/veve-sites — engine/lib/vitrine.mjs
 // ═══════════════════════════════════════════════════════════════════════════
 // LES ATOMES DE LA MAQUETTE — portés, pas réécrits
 // ═══════════════════════════════════════════════════════════════════════════

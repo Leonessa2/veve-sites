@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/robots.mjs  (FICHIER NEUF, lot 96)
+// ⚠️ Leonessa2/veve-sites — engine/lib/robots.mjs  (FICHIER NEUF, lot 96)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES GARDE-FOUS ANTI-ROBOTS DU FORMULAIRE D'INSCRIPTION
 // ═══════════════════════════════════════════════════════════════════════════

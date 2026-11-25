@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/entrer.js  (FICHIER NEUF, lot 90)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/entrer.js  (FICHIER NEUF, lot 90)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE POINT D'ARRIVÉE — celui qui pose enfin `vp_session`.
 // ═══════════════════════════════════════════════════════════════════════════

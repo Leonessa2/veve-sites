@@ -1,6 +1,6 @@
 // =============================================================================
 //  test_langues.mjs — le garde-fou d'« UNE SECTION PAR LANGUE »
-//  ⚠️ VeVePreda/veve-sites — engine/tools/test_langues.mjs
+//  ⚠️ Leonessa2/veve-sites — engine/tools/test_langues.mjs
 //      SITE=vevewiki npm run test:langues
 //
 //  CE QU'IL PROTÈGE, ET POURQUOI AUCUN BUILD NE LE VERRAIT

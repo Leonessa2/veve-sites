@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/journal.mjs   (FICHIER NEUF — lot 215)
+// ⚠️ Leonessa2/veve-sites — engine/lib/journal.mjs   (FICHIER NEUF — lot 215)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PRODUCTEUR — il DÉPOUILLE la réserve et écrit le journal des franchissements
 // ═══════════════════════════════════════════════════════════════════════════

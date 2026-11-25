@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_affichage.mjs   (FICHIER NEUF — lot 118)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_affichage.mjs   (FICHIER NEUF — lot 118)
 // ═══════════════════════════════════════════════════════════════════════════
 //  CE QUE L'ÉCRAN MONTRE — les quatre défauts signalés par Preda le 10/08
 // ═══════════════════════════════════════════════════════════════════════════

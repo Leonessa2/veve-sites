@@ -1,7 +1,7 @@
 // =============================================================================
 //  editorial.mjs — le CONSOMMATEUR générique du contenu éditorial (tous sites)
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/editorial.mjs)
 //
 //  Étape 2 du constructeur générique (bible/architecture-generateur-sites.md).

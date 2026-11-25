@@ -1,4 +1,4 @@
-// ⚠️ DEPOT : VeVePreda/veve-sites  ·  CHEMIN : engine/lib/ventes.mjs   (FICHIER NEUF — lot 210-A2)
+// ⚠️ DEPOT : Leonessa2/veve-sites  ·  CHEMIN : engine/lib/ventes.mjs   (FICHIER NEUF — lot 210-A2)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES DERNIÈRES VENTES D'UNE PIÈCE — écrites hors de `dist/`, servies sous porte.
 // ═══════════════════════════════════════════════════════════════════════════

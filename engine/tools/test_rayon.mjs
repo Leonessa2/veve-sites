@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_rayon.mjs   (FICHIER NEUF — lot 113)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_rayon.mjs   (FICHIER NEUF — lot 113)
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE RAYON : TOUT LE CATALOGUE, SANS UN PRIX, ET SANS RIEN PERDRE

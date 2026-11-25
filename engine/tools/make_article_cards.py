@@ -3,7 +3,7 @@
 """
 Cartes de partage PAR ARTICLE — `public/og/<langue>/<slug>.png`, 1200x630.
 
-⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/tools/
+⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/tools/
    (chemin exact : engine/tools/make_article_cards.py)
 
     SITE=vevewiki python3 engine/tools/make_article_cards.py

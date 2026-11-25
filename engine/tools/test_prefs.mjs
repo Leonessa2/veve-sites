@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_prefs.mjs  (FICHIER NEUF, lot 154-B)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_prefs.mjs  (FICHIER NEUF, lot 154-B)
 //
 //     npm run test:prefs
 //

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/rayon.js   (FICHIER NEUF — lot 155)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/rayon.js   (FICHIER NEUF — lot 155)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE PILOTE DE LA BARRE DE RAYON — UN SEUL, POUR LES TROIS RAYONS
 // ═══════════════════════════════════════════════════════════════════════════

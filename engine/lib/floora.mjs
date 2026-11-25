@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/floora.mjs   (FICHIER NEUF — relooking 2)
+// ⚠️ Leonessa2/veve-sites — engine/lib/floora.mjs   (FICHIER NEUF — relooking 2)
 // ═══════════════════════════════════════════════════════════════════════════
 // 🌱 FLOORA — LA POSE NE SE CHOISIT PAS, ELLE EST ASSIGNÉE
 // ═══════════════════════════════════════════════════════════════════════════

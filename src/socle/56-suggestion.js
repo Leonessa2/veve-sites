@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/56-suggestion.js   (FICHIER NEUF — lot 212)
+// ⚠️ Leonessa2/veve-sites — src/socle/56-suggestion.js   (FICHIER NEUF — lot 212)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA SUGGESTION DE LANGUE — UNE INFOBULLE SOUS LE BOUTON, PLUS UN BANDEAU
 // ═══════════════════════════════════════════════════════════════════════════

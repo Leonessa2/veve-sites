@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/tableau.mjs   (FICHIER NEUF — lot 202)
+// ⚠️ Leonessa2/veve-sites — engine/lib/tableau.mjs   (FICHIER NEUF — lot 202)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES ACCÈS RAPIDES DU TABLEAU DE BORD — point `z` de la liste de Preda
 // ═══════════════════════════════════════════════════════════════════════════

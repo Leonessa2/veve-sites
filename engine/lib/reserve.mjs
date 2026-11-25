@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/reserve.mjs   (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/lib/reserve.mjs   (FICHIER NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 // LA RÉSERVE — l'historique COMPLET, écrit au build, HORS du site publié.
 // ═══════════════════════════════════════════════════════════════════════════

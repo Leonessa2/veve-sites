@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/plancher_ecarte.mjs   (FICHIER NEUF — lot 193)
+// ⚠️ Leonessa2/veve-sites — engine/lib/plancher_ecarte.mjs   (FICHIER NEUF — lot 193)
 // ═══════════════════════════════════════════════════════════════════════════
 // 🔴🔴🔴 LOT 193 — LA RÈGLE DU PLANCHER ÉCARTÉ, ÉCRITE **UNE SEULE FOIS**
 // ═══════════════════════════════════════════════════════════════════════════

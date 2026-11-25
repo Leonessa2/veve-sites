@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/favoris.js   (FICHIER NEUF — lot 140-3)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/favoris.js   (FICHIER NEUF — lot 140-3)
 // ═══════════════════════════════════════════════════════════════════════════
 // ❤️ LA PORTE DES FAVORIS — ce qu'elle garde appartient enfin au compte
 // ═══════════════════════════════════════════════════════════════════════════

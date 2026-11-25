@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/analytics/[module].js  (NEUF)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/analytics/[module].js  (NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES MODULES ABONNÉS D'ANALYTICS — servis à la demande, jamais pré-générés
 // ═══════════════════════════════════════════════════════════════════════════

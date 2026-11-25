@@ -2,7 +2,7 @@
 //
 //   node engine/tools/test_donnees_structurees.mjs
 //
-// ⚠️ DEPOT : VeVePreda/veve-sites  ·  CHEMIN : engine/tools/test_donnees_structurees.mjs
+// ⚠️ DEPOT : Leonessa2/veve-sites  ·  CHEMIN : engine/tools/test_donnees_structurees.mjs
 //
 // ⭐ POURQUOI CE TEST EXISTE
 // Une donnee structuree est une PROMESSE faite a un moteur. Elle a deux facons

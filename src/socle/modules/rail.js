@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/rail.js   (FICHIER NEUF — LOT D)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/rail.js   (FICHIER NEUF — LOT D)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA FORME DE LA BARRE DE FILTRES — RAIL EN PC, FEUILLE EN MOBILE
 // ═══════════════════════════════════════════════════════════════════════════

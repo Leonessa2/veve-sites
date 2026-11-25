@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/portes.js  (FICHIER NEUF — lot 164)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/portes.js  (FICHIER NEUF — lot 164)
 // ═══════════════════════════════════════════════════════════════════════════
 // RÉGLER UNE PORTE — le geste le plus large de tout le site
 // ═══════════════════════════════════════════════════════════════════════════

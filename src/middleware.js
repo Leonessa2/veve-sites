@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/middleware.js  (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — src/middleware.js  (FICHIER NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 // LA PIÈCE QUI MANQUAIT — le middleware de session.
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/image_cdn.mjs   (FICHIER NEUF — relooking 2)
+// ⚠️ Leonessa2/veve-sites — engine/lib/image_cdn.mjs   (FICHIER NEUF — relooking 2)
 // ═══════════════════════════════════════════════════════════════════════════
 // 🖼️ CHOISIR LA BONNE TAILLE D'IMAGE SUR LE CDN — un point unique
 // ═══════════════════════════════════════════════════════════════════════════

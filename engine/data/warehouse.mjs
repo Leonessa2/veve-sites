@@ -1,4 +1,4 @@
-// ⚠️ DEPOT : VeVePreda/veve-sites  ·  CHEMIN : engine/data/warehouse.mjs
+// ⚠️ DEPOT : Leonessa2/veve-sites  ·  CHEMIN : engine/data/warehouse.mjs
 //
 // Accès à l'entrepôt de données jetonveve.
 // Lit les releases publiques (CSV.gz par URL). Repli automatique sur la
@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 const ROOT = process.env.PROJECT_ROOT || process.cwd();
 const SAMPLE_DIR = join(ROOT, 'engine', 'data', 'sample');
-const REPO = process.env.WAREHOUSE_REPO || 'fanablefrance/jetonveve';
+const REPO = process.env.WAREHOUSE_REPO || 'Leonessa2/jetonveve';
 const OFFLINE = process.env.WAREHOUSE_OFFLINE === '1';
 const base = (tag, file) => `https://github.com/${REPO}/releases/download/${tag}/${file}`;
 
@@ -100,7 +100,7 @@ const SOURCES = {
   // 💱 LE COURS OMI → USD — lot 181, 24/08/2026
   // ═══════════════════════════════════════════════════════════════════════════
   // Deux lignes, ~40 octets : `omi_usd, ts_utc`. Écrit par `floor-watch.yml`
-  // (fanablefrance/jetonveve) dans la MÊME étape que `releves.csv`, depuis la
+  // (Leonessa2/jetonveve) dans la MÊME étape que `releves.csv`, depuis la
   // MÊME source — le cours que `floor_watch.py` relève déjà à chaque tour pour
   // ses alertes, et qu'il jetait.
   //
@@ -134,7 +134,7 @@ const SOURCES = {
   // ═══════════════════════════════════════════════════════════════════════════
   // 🛰️ LES FICHES StackR — lot 190, 25/08/2026
   // ═══════════════════════════════════════════════════════════════════════════
-  // Écrit par `scraper/stackr_fiches.py` (fanablefrance/jetonveve), publié dans
+  // Écrit par `scraper/stackr_fiches.py` (Leonessa2/jetonveve), publié dans
   // la release `etat-fiches-stackr`. Schéma relevé sur le fichier PUBLIÉ le
   // 25/08 (2 000 lignes, en-tête compris) :
   //     veve_uuid, famille, ts_releve, floor_veve_usd, floor_stackr_omi,
@@ -169,7 +169,7 @@ const SOURCES = {
     // ═══════════════════════════════════════════════════════════════════════
     // 💰 LES VENTES StackR + VeVe — lot 210, 29/08/2026
     // ═══════════════════════════════════════════════════════════════════════
-    // 🔴🔴 SEULE SOURCE DU DEPOT `VeVePreda/scrapeur-veve` — PAS jetonveve.
+    // 🔴🔴 SEULE SOURCE DU DEPOT `Leonessa2/scrapeur-veve` — PAS jetonveve.
     // `base()` est cloue sur `WAREHOUSE_REPO` ; cette release vit dans le depot
     // qui PRODUIT le fichier (`scraper/ventes_agregat.py`, publie par
     // `daily.yml`). L'URL est donc en dur, et c'est l'ECART qu'il fallait
@@ -200,7 +200,7 @@ const SOURCES = {
     // ⛔ PAS DE `prev` : `etat-ventes-stackr-prev` n'existe pas. Un secours qui
     // n'existe pas ne se declare pas (meme raison que `releves` et `omiUsd`).
     url: process.env.VENTES_URL
-      || 'https://github.com/VeVePreda/scrapeur-veve/releases/download/etat-ventes-stackr/ventes_stackr.csv',
+      || 'https://github.com/Leonessa2/scrapeur-veve/releases/download/etat-ventes-stackr/ventes_stackr.csv',
     sample: 'ventes.csv',
   },
 
@@ -219,7 +219,7 @@ const SOURCES = {
   // une solution (« il faut collecter ») fait sauter la question du besoin.
   //
   // 🔴 CE SONT DES FICHIERS DU DÉPÔT, PAS DES RELEASES. `base()` fabrique des
-  // URL de release ; ces deux-là vivent dans `data/` de `fanablefrance/jetonveve`
+  // URL de release ; ces deux-là vivent dans `data/` de `Leonessa2/jetonveve`
   // et se lisent en RAW. L'URL est donc en dur — même écart, et même raison,
   // que `ventes` plus haut : on le commente, on ne le cache pas.
   //
@@ -241,12 +241,12 @@ const SOURCES = {
   // case du pouls redit « pas encore branché » et le build reste vert.
   burns: {
     url: process.env.BURNS_URL
-      || 'https://raw.githubusercontent.com/fanablefrance/jetonveve/main/data/burns_daily.csv',
+      || 'https://raw.githubusercontent.com/Leonessa2/jetonveve/main/data/burns_daily.csv',
     sample: 'burns_daily.csv',
   },
   burnsSplit: {
     url: process.env.BURNS_SPLIT_URL
-      || 'https://raw.githubusercontent.com/fanablefrance/jetonveve/main/data/burns_split_daily.csv',
+      || 'https://raw.githubusercontent.com/Leonessa2/jetonveve/main/data/burns_split_daily.csv',
     sample: 'burns_split_daily.csv',
   },
 
@@ -815,7 +815,7 @@ export const getVentes = () => chargerFacultatif('ventes');
 // Un pont qui rend d'autres chiffres que le constat qu'il remplace n'est pas un
 // pont, c'est un second constat.
 const JOURS_ESSAYES = 4;
-const urlTransferts = (jour) => 'https://github.com/VeVePreda/scrapeur-veve/releases/'
+const urlTransferts = (jour) => 'https://github.com/Leonessa2/scrapeur-veve/releases/'
   + `download/chain-archive-daily/transfers_daily_${jour}.csv.gz`;
 
 /** Les transferts du jour le plus récent qu'on trouve, ou `null`.

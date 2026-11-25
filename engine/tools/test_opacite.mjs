@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_opacite.mjs   (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_opacite.mjs   (FICHIER NEUF)
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  LOT 111 — UN ÉTAT DE DÉPART SANS ÉTAT D'ARRIVÉE

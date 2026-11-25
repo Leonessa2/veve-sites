@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/features.mjs
+// ⚠️ Leonessa2/veve-sites — engine/lib/features.mjs
 // Fonctionnalités activées par le MANIFESTE. `priceEnabled()` = ce site publie-t-il
 // des pages de PRIX (movers, collections, raretés, fiches) ? Vrai seulement si le
 // manifeste déclare des modules de données prix (content.data_modules non vide),

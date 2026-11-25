@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/compte.mjs   (FICHIER NEUF — lot 140-3)
+// ⚠️ Leonessa2/veve-sites — engine/lib/compte.mjs   (FICHIER NEUF — lot 140-3)
 // ═══════════════════════════════════════════════════════════════════════════
 // QUI EST CETTE PERSONNE ? — la seule réponse à laquelle on peut ranger
 // ═══════════════════════════════════════════════════════════════════════════

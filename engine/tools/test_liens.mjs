@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // test:liens — UN LIEN VERS UNE ADRESSE GATÉE EST GARDÉ PAR CE QUI LA GATE
 // ═══════════════════════════════════════════════════════════════════════════
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_liens.mjs   (FICHIER NEUF — lot 213)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_liens.mjs   (FICHIER NEUF — lot 213)
 //
 // 🔬 POURQUOI CE BANC EXISTE — IL A ÉTÉ MESURÉ MANQUANT, PAS SUPPOSÉ.
 // Le 01/09, en jugeant le lot 213, j'ai retiré la garde `priceEnabled()` du

@@ -1,5 +1,5 @@
 # =============================================================================
-#  ⚠️ VeVePreda/veve-sites — .github/workflows/vevewiki-editorial.yml
+#  ⚠️ Leonessa2/veve-sites — .github/workflows/vevewiki-editorial.yml
 #
 #  🔴 CE FICHIER NE CONCERNE PLUS LE SEUL VEVEWIKI — 03/08/2026, lot 45.
 #  ═══════════════════════════════════════════════════════════════════════════
@@ -37,7 +37,7 @@
 #
 #  SECRETS (Settings ▸ Secrets ▸ Actions du dépôt veve-sites) :
 #    GOOGLE_SERVICE_ACCOUNT_JSON   le service-account gspread (le MÊME que scrapeur-veve)
-#    SCRAPEUR_VEVE_PAT             PAT (lecture) pour cloner VeVePreda/scrapeur-veve
+#    SCRAPEUR_VEVE_PAT             PAT (lecture) pour cloner Leonessa2/scrapeur-veve
 #    COOLIFY_DEPLOY_URL_VEVEWIKI   URL de déploiement Coolify de l'app vevewiki
 #    COOLIFY_DEPLOY_URL            URL de déploiement Coolify de veveprice (déjà
 #                                  utilisée par rebuild-daily — ⛔ ne pas la dupliquer)
@@ -91,7 +91,7 @@ jobs:
       - name: Checkout scrapeur-veve (le récolteur)
         uses: actions/checkout@v5
         with:
-          repository: VeVePreda/scrapeur-veve
+          repository: Leonessa2/scrapeur-veve
           token: ${{ secrets.SCRAPEUR_VEVE_PAT }}
           path: _scrapeur
 

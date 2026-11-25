@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/qr.mjs   (FICHIER NEUF — lot 201)
+// ⚠️ Leonessa2/veve-sites — engine/lib/qr.mjs   (FICHIER NEUF — lot 201)
 // ═══════════════════════════════════════════════════════════════════════════
 //  UN CODE QR, ÉCRIT À LA MAIN, PARCE QUE CE DÉPÔT N'AJOUTE PAS DE DÉPENDANCE
 // ═══════════════════════════════════════════════════════════════════════════

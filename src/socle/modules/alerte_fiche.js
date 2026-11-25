@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/alerte_fiche.js  (NEUF — lot 215-B)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/alerte_fiche.js  (NEUF — lot 215-B)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PANNEAU « SURVEILLER CE PRIX » — sur la fiche, et il ne fabrique rien
 // ═══════════════════════════════════════════════════════════════════════════

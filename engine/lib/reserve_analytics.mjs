@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/reserve_analytics.mjs  (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/lib/reserve_analytics.mjs  (FICHIER NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES DÉRIVÉS DU GRAND LIVRE, ÉCRITS HORS DE `dist/` — lot 44, 03/08/2026
 // ═══════════════════════════════════════════════════════════════════════════
@@ -130,7 +130,7 @@ export function ecrire() {
     if (manquants.length) {
       throw new Error(`[reserve-analytics] profils_agregats : bloc(s) absent(s) « ${manquants.join(', ')} » `
         + `— ${profils.length} ligne(s) lues, blocs vus : ${Object.keys(parBloc).join(', ') || '(aucun)'}. `
-        + `La source vient de fanablefrance/jetonveve (ledger_derived.py).`);
+        + `La source vient de Leonessa2/jetonveve (ledger_derived.py).`);
     }
 
     const totalProfils = nombre(parBloc.total[0].wallets) || 0;

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/cote/lot.js   (FICHIER NEUF — lot 101)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/cote/lot.js   (FICHIER NEUF — lot 101)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES COTES D'UNE PAGE, EN UN SEUL ALLER-RETOUR
 // ═══════════════════════════════════════════════════════════════════════════

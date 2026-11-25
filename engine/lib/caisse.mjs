@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/caisse.mjs   (FICHIER NEUF — lot 200)
+// ⚠️ Leonessa2/veve-sites — engine/lib/caisse.mjs   (FICHIER NEUF — lot 200)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA CAISSE — encaisser de l'USDC/USDT sur Base, et ouvrir le palier
 // ═══════════════════════════════════════════════════════════════════════════

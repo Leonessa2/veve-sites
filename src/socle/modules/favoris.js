@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/favoris.js  (lot 140-3 · 154-A · 160-B)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/favoris.js  (lot 140-3 · 154-A · 160-B)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PILOTE DE `/favoris/` — IL NE BÂTIT PLUS LA LISTE, IL LA CORRIGE
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,7 +1,7 @@
 // =============================================================================
 //  figures_markdown.mjs — la MÊME syntaxe de figure dans les articles `.md`
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/figures_markdown.mjs)
 //
 //  POURQUOI IL EXISTE

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/vignette.mjs   (FICHIER NEUF — lot 139)
+// ⚠️ Leonessa2/veve-sites — engine/lib/vignette.mjs   (FICHIER NEUF — lot 139)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA VIGNETTE — CE QU'UNE TUILE MONTRE, DÉCLARÉ UNE FOIS
 // ═══════════════════════════════════════════════════════════════════════════

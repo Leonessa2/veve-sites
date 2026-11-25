@@ -1,4 +1,4 @@
-// ⚠️ DEPOT : VeVePreda/veve-sites  ·  CHEMIN : engine/tools/test_ventes.mjs
+// ⚠️ DEPOT : Leonessa2/veve-sites  ·  CHEMIN : engine/tools/test_ventes.mjs
 //
 // Banc des VENTES reservees (lot 210-A2/A3, 29/08/2026).
 //

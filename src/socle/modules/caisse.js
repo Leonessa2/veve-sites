@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/caisse.js   (FICHIER NEUF — lot 200)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/caisse.js   (FICHIER NEUF — lot 200)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PILOTE DE L'ÉCRAN D'ACHAT — il ouvre la commande, puis il attend
 // ═══════════════════════════════════════════════════════════════════════════

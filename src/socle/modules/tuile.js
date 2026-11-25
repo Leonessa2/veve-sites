@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites  ·  CHEMIN : src/socle/modules/tuile.js
+// ⚠️ Leonessa2/veve-sites  ·  CHEMIN : src/socle/modules/tuile.js
 //
 // ═══════════════════════════════════════════════════════════════════════════
 // 🧩🔴🔴🔴 LOT G — **LA** TUILE. UNE SEULE DESCRIPTION, TROIS FABRIQUES.

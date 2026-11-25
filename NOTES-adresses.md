@@ -1,6 +1,6 @@
 # Lot « garde-fous d'adresses » — le reste de l'étape 2
 
-Dépôt : **`VeVePreda/veve-sites`**. Quatre fichiers.
+Dépôt : **`Leonessa2/veve-sites`**. Quatre fichiers.
 
 ```
 engine/tools/test_renommage.mjs        NOUVEAU

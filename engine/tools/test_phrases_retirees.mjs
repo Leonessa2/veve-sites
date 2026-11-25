@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_phrases_retirees.mjs  (NEUF — lot 102)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_phrases_retirees.mjs  (NEUF — lot 102)
 // ═══════════════════════════════════════════════════════════════════════════
 // LES PHRASES RETIRÉES NE REVIENNENT PAS — et on le VÉRIFIE
 // ═══════════════════════════════════════════════════════════════════════════

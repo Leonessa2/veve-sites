@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/rayon_index.mjs   (FICHIER NEUF — lot 155)
+// ⚠️ Leonessa2/veve-sites — engine/lib/rayon_index.mjs   (FICHIER NEUF — lot 155)
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  L'INDEX D'UN RAYON — CE QUI PERMET DE FILTRER 16 789 LIGNES SANS LES SERVIR

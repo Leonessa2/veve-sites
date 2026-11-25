@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/deconnexion.js
+// ⚠️ Leonessa2/veve-sites — src/pages/api/deconnexion.js
 // Effacer la session. ⛔ POST UNIQUEMENT.
 // Un GET destructeur est déclenchable par un simple <img src="…">, et les
 // préchargeurs de liens du navigateur le suivent d'eux-mêmes : on déconnecterait

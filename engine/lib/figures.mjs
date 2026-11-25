@@ -1,7 +1,7 @@
 // =============================================================================
 //  figures.mjs — LES FIGURES DE DONNÉES DU RÉSEAU
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/figures.mjs)
 //
 //  À QUOI ÇA SERT

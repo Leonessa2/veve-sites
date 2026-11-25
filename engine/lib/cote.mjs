@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/cote.mjs   (FICHIER NEUF — lot 101)
+// ⚠️ Leonessa2/veve-sites — engine/lib/cote.mjs   (FICHIER NEUF — lot 101)
 // ═══════════════════════════════════════════════════════════════════════════
 // LA COTE — le prix COURANT et les extrêmes quittent le jeu de données public.
 // ═══════════════════════════════════════════════════════════════════════════

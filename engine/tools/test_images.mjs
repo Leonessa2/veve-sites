@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_images.mjs   (FICHIER NEUF — relooking 2)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_images.mjs   (FICHIER NEUF — relooking 2)
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  LES IMAGES : CE QU'ON TÉLÉCHARGE CONTRE CE QU'ON DESSINE

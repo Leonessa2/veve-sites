@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/sets_mcp.mjs   (FICHIER NEUF — lot 228)
+// ⚠️ Leonessa2/veve-sites — engine/lib/sets_mcp.mjs   (FICHIER NEUF — lot 228)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE RENDEMENT MCP D'UN SET — « quels sets valent le plus par point gagné ? »
 // ═══════════════════════════════════════════════════════════════════════════

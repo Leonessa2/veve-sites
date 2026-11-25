@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/rayon-index/[corpus].json.js   (NEUF — lot 155)
+// ⚠️ Leonessa2/veve-sites — src/pages/rayon-index/[corpus].json.js   (NEUF — lot 155)
 // ═══════════════════════════════════════════════════════════════════════════
 //  L'INDEX DES RAYONS, SERVI EN TROIS FICHIERS STATIQUES
 // ═══════════════════════════════════════════════════════════════════════════

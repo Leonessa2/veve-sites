@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/socle/modules/alertes.js  (FICHIER NEUF — lot 215)
+// ⚠️ Leonessa2/veve-sites — src/socle/modules/alertes.js  (FICHIER NEUF — lot 215)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE PILOTE DES DEUX PAGES D'ALERTES — il n'invente rien, il corrige
 // ═══════════════════════════════════════════════════════════════════════════

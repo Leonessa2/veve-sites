@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — outils/marquer_i18n.mjs   (FICHIER NEUF — lot 129)
+// ⚠️ Leonessa2/veve-sites — outils/marquer_i18n.mjs   (FICHIER NEUF — lot 129)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE POST-TRAITEMENT QUI TRANSFORME LES SENTINELLES EN `data-i18n`
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,7 +1,7 @@
 // =============================================================================
 //  editorial_pages.mjs — les TYPES DE PAGE éditoriaux activables par manifeste
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/editorial_pages.mjs)
 //
 //  Étape 3 du constructeur générique (bible/architecture-generateur-sites.md).

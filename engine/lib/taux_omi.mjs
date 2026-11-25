@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/taux_omi.mjs   (FICHIER NEUF — lot 181)
+// ⚠️ Leonessa2/veve-sites — engine/lib/taux_omi.mjs   (FICHIER NEUF — lot 181)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE COURS OMI → USD : un seul nombre, une seule date, une seule règle
 // ═══════════════════════════════════════════════════════════════════════════
@@ -21,7 +21,7 @@
 // ⇒ Si quelqu'un lit ce module pour en tirer un floor VeVe depuis un floor
 //   StackR, il aura mal lu : ce n'est pas ce que ces fonctions font.
 //
-// 🔑 D'OÙ VIENT LE NOMBRE. `floor_watch.py` (fanablefrance/jetonveve) appelle
+// 🔑 D'OÙ VIENT LE NOMBRE. `floor_watch.py` (Leonessa2/jetonveve) appelle
 // `getTokenPrices → omiPrice` à CHAQUE tour depuis toujours, s'en sert pour
 // les alertes, et le jetait. Le lot 181-A le persiste dans `floor_state.json`,
 // et `floor-watch.yml` en tire `omi_usd.csv` (2 lignes) sur la release

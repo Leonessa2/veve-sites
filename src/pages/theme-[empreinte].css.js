@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/theme-[empreinte].css.js   (NEUF — lot 105)
+// ⚠️ Leonessa2/veve-sites — src/pages/theme-[empreinte].css.js   (NEUF — lot 105)
 // ═══════════════════════════════════════════════════════════════════════════
 // LA FEUILLE DE THÈME, SERVIE UNE FOIS
 // ═══════════════════════════════════════════════════════════════════════════

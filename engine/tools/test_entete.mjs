@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_entete.mjs   (NEUF — lot 103)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_entete.mjs   (NEUF — lot 103)
 // ═══════════════════════════════════════════════════════════════════════════
 // L'EN-TÊTE NE DÉPEND PAS DU MODE DE RENDU — et on le PROUVE
 // ═══════════════════════════════════════════════════════════════════════════

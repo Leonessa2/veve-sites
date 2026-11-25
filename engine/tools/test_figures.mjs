@@ -1,6 +1,6 @@
 // =============================================================================
 //  test_figures.mjs — le garde-fou des FIGURES DE DONNÉES
-//  ⚠️ VeVePreda/veve-sites — engine/tools/test_figures.mjs
+//  ⚠️ Leonessa2/veve-sites — engine/tools/test_figures.mjs
 //      SITE=vevewiki npm run test:figures
 //
 //  Ce que ces contrôles protègent, et pourquoi ça vaut un fichier de tests :

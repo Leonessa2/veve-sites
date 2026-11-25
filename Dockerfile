@@ -1,4 +1,4 @@
-# ⚠️ CE FICHIER VA DANS LE DEPOT VeVePreda/veve-sites, A LA RACINE (./Dockerfile)
+# ⚠️ CE FICHIER VA DANS LE DEPOT Leonessa2/veve-sites, A LA RACINE (./Dockerfile)
 # UNE SEULE IMAGE, DEUX MODES — ET C'EST LE MANIFESTE QUI DECIDE.
 #
 #   sites/<SITE>/manifest.yml :  rendering: static   -> nginx seul

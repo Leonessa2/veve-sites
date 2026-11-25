@@ -1,4 +1,4 @@
-// ⚠️ DEPOT : VeVePreda/veve-sites
+// ⚠️ DEPOT : Leonessa2/veve-sites
 // CHEMIN : engine/tools/test_adresses_comics.mjs
 //
 // La feuille des comics a TROIS niveaux : /comics/<serie>/<numero>/<rarete>/.

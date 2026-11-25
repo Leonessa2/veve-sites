@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/theme.mjs   (FICHIER NEUF — lot 217)
+// ⚠️ Leonessa2/veve-sites — engine/lib/theme.mjs   (FICHIER NEUF — lot 217)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE THÈME SUIT LE COMPTE — la dernière préférence restée dans le navigateur
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/favoris.mjs   (FICHIER NEUF — lot 140-3)
+// ⚠️ Leonessa2/veve-sites — engine/lib/favoris.mjs   (FICHIER NEUF — lot 140-3)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE RANGEMENT DES FAVORIS — SQLite, chez veveprice, rangé par COMPTE
 // ═══════════════════════════════════════════════════════════════════════════

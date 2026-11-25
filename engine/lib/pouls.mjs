@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/pouls.mjs   (FICHIER NEUF — lot J)
+// ⚠️ Leonessa2/veve-sites — engine/lib/pouls.mjs   (FICHIER NEUF — lot J)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE POULS 24 H — trois chiffres datés et deux tirets, et pas un zéro
 // ═══════════════════════════════════════════════════════════════════════════
@@ -10,7 +10,7 @@
 // fichier affirmait « aucune source n'existe » ; ma propre mémoire disait le
 // contraire, je l'ai vérifiée, et c'est elle qui avait raison. Mesuré le
 // 07/09 à 17:39 UTC, par l'API :
-//   · release `chain-archive-daily` (dépôt **VeVePreda/scrapeur-veve**, pas
+//   · release `chain-archive-daily` (dépôt **Leonessa2/scrapeur-veve**, pas
 //     jetonveve) : **89 assets**, un `transfers_daily_<AAAA-MM-JJ>.csv.gz` par
 //     jour, le dernier (`…2026-09-06`) **mis à jour le 07/09 à 07:22 UTC** —
 //     soit J-1, tous les matins ;

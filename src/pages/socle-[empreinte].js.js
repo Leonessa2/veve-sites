@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/socle-[empreinte].js.js   (NEUF — lot 137)
+// ⚠️ Leonessa2/veve-sites — src/pages/socle-[empreinte].js.js   (NEUF — lot 137)
 // ═══════════════════════════════════════════════════════════════════════════
 // LE SOCLE JAVASCRIPT, SERVI UNE FOIS
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/palier-vu.js  (FICHIER NEUF — lot 187)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/palier-vu.js  (FICHIER NEUF — lot 187)
 // ═══════════════════════════════════════════════════════════════════════════
 // 👓 « VOIR COMME » — regarder le site avec les yeux d'un autre palier
 // ═══════════════════════════════════════════════════════════════════════════

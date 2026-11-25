@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_entetes.mjs   (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_entetes.mjs   (FICHIER NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LES EN-TÊTES DE SÉCURITÉ — le banc qui RÉCLAME ce que le dépôt ne contient pas
 // ═══════════════════════════════════════════════════════════════════════════

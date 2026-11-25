@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_series.mjs   (FICHIER NEUF — lot 133)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_series.mjs   (FICHIER NEUF — lot 133)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LES FILTRES DE SÉRIES — et la question qui décide de tout :
 //  LE FILTRE CHERCHE-T-IL DANS TOUT, OU SEULEMENT DANS CE QUI EST AFFICHÉ ?

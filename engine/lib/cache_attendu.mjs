@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/cache_attendu.mjs   (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/lib/cache_attendu.mjs   (FICHIER NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA DÉCLARATION DU CACHE — qui a le DROIT d'être servi depuis le bord
 // ═══════════════════════════════════════════════════════════════════════════

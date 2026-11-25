@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/lib/entetes_attendus.mjs   (FICHIER NEUF)
+// ⚠️ Leonessa2/veve-sites — engine/lib/entetes_attendus.mjs   (FICHIER NEUF)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LA DÉCLARATION DES EN-TÊTES DE SÉCURITÉ — la moitié du dépôt qui SAIT
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — src/pages/api/cote/[uuid].js   (FICHIER NEUF — lot 101)
+// ⚠️ Leonessa2/veve-sites — src/pages/api/cote/[uuid].js   (FICHIER NEUF — lot 101)
 // ═══════════════════════════════════════════════════════════════════════════
 // LA COTE D'UNE PIÈCE — prix plancher courant, extrêmes, percentiles.
 // ═══════════════════════════════════════════════════════════════════════════

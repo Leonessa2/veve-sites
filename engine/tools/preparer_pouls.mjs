@@ -8,9 +8,9 @@
 // données ». C'était faux, et la même erreur à chaque fois : une note qui nomme
 // une SOLUTION fait sauter la question du BESOIN. La donnée est publiée,
 // quotidienne, à J-1, depuis toujours :
-//   · `VeVePreda/scrapeur-veve` release `chain-archive-daily`
+//   · `Leonessa2/scrapeur-veve` release `chain-archive-daily`
 //     → `transfers_daily_<AAAA-MM-JJ>.csv.gz`, 90 assets, publié ~07:15 UTC
-//   · `fanablefrance/jetonveve` `data/burns_daily.csv` (OMI brûlés, quotidien)
+//   · `Leonessa2/jetonveve` `data/burns_daily.csv` (OMI brûlés, quotidien)
 //   · le catalogue, qu'on charge déjà, pour le `store_price` des pièces mintées
 //
 // ⛔ POURQUOI UN OUTIL ET PAS UN `fetch` DANS LA PAGE. Le tableau de bord est
@@ -103,7 +103,7 @@ async function principal() {
   const constat = {
     _lisezMoi: 'LE POULS 24 H, CALCULÉ. Ce fichier n\'est plus recopié à la main :'
       + ' `engine/tools/preparer_pouls.mjs` le régénère depuis la release'
-      + ' `chain-archive-daily` de VeVePreda/scrapeur-veve, le catalogue et'
+      + ' `chain-archive-daily` de Leonessa2/scrapeur-veve, le catalogue et'
       + ' `burns_daily.csv`. ⛔ Ne pas l\'éditer : relancer l\'outil.',
     mesureLe: new Date().toISOString(),
     mesurePar: paquet.source,

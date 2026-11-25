@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_projection.mjs   (FICHIER NEUF — lot 117)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_projection.mjs   (FICHIER NEUF — lot 117)
 // ═══════════════════════════════════════════════════════════════════════════
 //  LE BANC DE LA PROJECTION — il ferme le CIRCUIT, pas seulement l'écriture
 // ═══════════════════════════════════════════════════════════════════════════

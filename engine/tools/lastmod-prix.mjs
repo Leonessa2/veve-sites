@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// ⚠️ DEPOT : VeVePreda/veve-sites   ·   CHEMIN : engine/tools/lastmod-prix.mjs
+// ⚠️ DEPOT : Leonessa2/veve-sites   ·   CHEMIN : engine/tools/lastmod-prix.mjs
 //
 // Date de dernier changement REEL de chaque FICHE de prix, et des index qui
 // les rassemblent. Ecrit dans le meme `engine/data/lastmod.<site>.json` que

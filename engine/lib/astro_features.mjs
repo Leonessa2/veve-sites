@@ -1,7 +1,7 @@
 // =============================================================================
 //  astro_features.mjs — l'intégration Astro qui EFFACE les pages d'une
 //  fonctionnalité désactivée par le manifeste.
-//  ⚠️ VeVePreda/veve-sites — engine/lib/astro_features.mjs
+//  ⚠️ Leonessa2/veve-sites — engine/lib/astro_features.mjs
 //
 //  LE PROBLÈME (audit SEO du 27/07/2026, « 3 pages fantômes »)
 //  -----------------------------------------------------------------------------

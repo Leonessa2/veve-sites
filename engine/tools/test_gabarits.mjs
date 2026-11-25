@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_gabarits.mjs
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_gabarits.mjs
 //
 // ═══════════════════════════════════════════════════════════════════════════
 //  POURQUOI CE BANC EXISTE — 30/07/2026, un build de production cassé

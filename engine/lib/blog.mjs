@@ -1,7 +1,7 @@
 // =============================================================================
 //  blog.mjs — les ARTICLES, source HYBRIDE (Sheet + Markdown du dépôt)
 //
-//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/veve-sites , dans  engine/lib/
+//  ⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/veve-sites , dans  engine/lib/
 //     (chemin exact : engine/lib/blog.mjs)
 //
 //  DEUX SOURCES, UN SEUL FLUX (décision Preda, 27/07/2026) :

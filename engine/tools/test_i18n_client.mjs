@@ -1,4 +1,4 @@
-// ⚠️ VeVePreda/veve-sites — engine/tools/test_i18n_client.mjs  (FICHIER NEUF — lot 129)
+// ⚠️ Leonessa2/veve-sites — engine/tools/test_i18n_client.mjs  (FICHIER NEUF — lot 129)
 // ═══════════════════════════════════════════════════════════════════════════
 //  L'ÉCHANGE DES LIBELLÉS — et ce banc l'EXÉCUTE, il ne le compte pas
 // ═══════════════════════════════════════════════════════════════════════════
