@@ -274,13 +274,22 @@ async function rpc(methode, params, delaiMs = 8000) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: methode, params }),
     });
+    // 🚦 LOT 230 — UN 429 N'EST PAS UNE PANNE COMME LES AUTRES. Mesuré le
+    //   26/11 depuis le conteneur veveprice : `mainnet.base.org` répond 429
+    //   « request limit reached » à TOUTES les lectures `eth_getLogs`, même sur
+    //   100 blocs. Le confondre avec « http » cachait la seule cause qui
+    //   compte : le nœud public n'accepte plus qu'on lise les paiements.
+    if (r.status === 429) return { erreur: 'limite' };
     if (!r.ok) return { erreur: 'http' };
     const j = await r.json();
     // ⚠️ UN NOEUD QUI REFUSE RÉPOND 200 AVEC UN CHAMP `error`. Le lire comme
     //   un succès rendrait « zéro transfert » — indiscernable de « personne
     //   n'a payé ». Deux causes, un seul chemin de sortie : c'est le défaut
     //   qu'on refuse.
-    if (j && j.error) return { erreur: 'refus' };
+    if (j && j.error) {
+      const m = String(j.error.message || '').toLowerCase();
+      return { erreur: (j.error.code === -32011 || /limit|rate/.test(m)) && !/range/.test(m) ? 'limite' : 'refus' };
+    }
     return { resultat: j?.result };
   } catch (e) {
     return { erreur: e && e.name === 'AbortError' ? 'delai' : 'reseau' };
@@ -293,6 +302,68 @@ const versDecimal = (hexa) => {
   if (typeof hexa !== 'string' || !/^0x[0-9a-fA-F]{1,16}$/.test(hexa)) return null;
   return Number.parseInt(hexa, 16);
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🚦 LOT 230 — NOUVELLE TENTATIVE, ET UN ÉCHEC QUI SE VOIT ET QUI DURE
+// ═══════════════════════════════════════════════════════════════════════════
+// AVANT : une tranche refusée arrêtait le passage (bien : le curseur ne saute
+//   rien), le suivant repartait 30 s plus tard (bien)… mais SEULEMENT tant
+//   qu'une commande attendait. La commande expire au bout de 24 h, le minuteur
+//   s'arrête, et le paiement n'est NI crédité NI orphelin. La seule trace
+//   était `erreur: "http"` dans `/api/sante`, effacée au prochain succès et
+//   invisible une fois le minuteur arrêté. *Un échec qui ne laisse rien
+//   derrière lui n'est pas géré, il est oublié.*
+// MAINTENANT :
+//   ① chaque lecture est retentée 2 fois (pauses 1 s puis 3 s) avant
+//     d'abandonner la tranche — un refus passager ne coûte plus un tour ;
+//   ② l'échec est ÉCRIT dans la base (`caisse_suivi`) : nombre d'échecs de
+//     suite, cause et heure de la dernière erreur, heure du premier échec,
+//     heure du dernier succès, dernière tête vue ⇒ il survit au redémarrage
+//     et `/api/sante` le montre, avec le retard en blocs ;
+//   ③ tant que le suivi échoue, il CONTINUE de tourner même si plus aucune
+//     commande n'attend, jusqu'à 24 h (`LIMITE_MS`) après le premier échec :
+//     un paiement de la fenêtre reste rattrapable dès que le nœud répond, et
+//     devient au pire un ORPHELIN visible au lieu d'un silence.
+const PAUSES_REPRISE_MS = () => String(process.env.CAISSE_PAUSES_MS || '1000,3000')
+  .split(',').map((x) => Number(x)).filter((x) => Number.isFinite(x) && x >= 0);
+const attendre = (ms) => new Promise((r) => { const t = setTimeout(r, ms); if (t.unref) t.unref(); });
+
+export async function rpcAvecReprise(methode, params) {
+  let r = await rpc(methode, params);
+  for (const pause of PAUSES_REPRISE_MS()) {
+    if (Array.isArray(r.resultat) || (r.resultat !== undefined && !r.erreur)) return r;
+    await attendre(pause);
+    r = await rpc(methode, params);
+  }
+  return r;
+}
+
+function noterEchec(cause) {
+  try {
+    const n = (Number(lireSuivi('echecs_de_suite')) || 0) + 1;
+    poserSuivi('echecs_de_suite', String(n));
+    poserSuivi('derniere_erreur', JSON.stringify({ cause: String(cause || 'inconnue'), quand: new Date().toISOString() }));
+    if (n === 1) poserSuivi('premier_echec', String(Date.now()));
+  } catch { /* une caisse ne tue jamais son serveur */ }
+}
+function noterSucces() {
+  try {
+    poserSuivi('echecs_de_suite', '0');
+    poserSuivi('premier_echec', '0');
+    poserSuivi('dernier_succes', new Date().toISOString());
+  } catch { /* idem */ }
+}
+// ⭐ Exportée pour le banc : faut-il continuer de tourner ?
+export function doitContinuer() {
+  try {
+    if (commandesActives() > 0) return true;
+    const n = Number(lireSuivi('echecs_de_suite')) || 0;
+    const debut = Number(lireSuivi('premier_echec')) || 0;
+    return n > 0 && debut > 0 && Date.now() - debut < LIMITE_MS;
+  } catch {
+    return false;
+  }
+}
 
 // 🕰️ LOT 230 — combien de blocs couvrent `LIMITE_MS` (+10 %) AU RYTHME
 //   ACTUEL de la chaîne. Exportée pour le banc.
@@ -405,8 +476,10 @@ export async function scanner() {
     const courant = versDecimal(tete.resultat);
     if (!Number.isFinite(courant)) {
       dernierBilan = { ...dernierBilan, quand: new Date().toISOString(), erreur: tete.erreur || 'forme' };
+      noterEchec(dernierBilan.erreur);
       return dernierBilan;
     }
+    poserSuivi('tete_vue', String(courant));
 
     // ⭐ AU TOUT PREMIER DÉMARRAGE ON PART DE TOUT PRÈS DE LA TÊTE, jamais de
     //   zéro : aucune commande n'existe avant, et remonter la chaîne entière
@@ -444,7 +517,7 @@ export async function scanner() {
     while (depuis < courant) {
       const fin = Math.min(depuis + TRANCHE_MAX, courant);
       for (const [nom, contrat] of Object.entries(JETONS)) {
-        const r = await rpc('eth_getLogs', [{
+        const r = await rpcAvecReprise('eth_getLogs', [{
           address: contrat,
           topics: [TOPIC_TRANSFER, null, cible],
           fromBlock: '0x' + depuis.toString(16),
@@ -459,6 +532,7 @@ export async function scanner() {
           dernierBilan = {
             quand: new Date().toISOString(), blocs, vus, credites, erreur: r.erreur || 'forme',
           };
+          noterEchec(dernierBilan.erreur);
           return dernierBilan;
         }
         for (const log of r.resultat) {
@@ -476,9 +550,11 @@ export async function scanner() {
     }
 
     dernierBilan = { quand: new Date().toISOString(), blocs, vus, credites, erreur: null };
+    noterSucces();
     return dernierBilan;
   } catch {
     dernierBilan = { ...dernierBilan, quand: new Date().toISOString(), erreur: 'interne' };
+    noterEchec('interne');
     return dernierBilan;
   } finally {
     scanEnCours = false;
@@ -545,7 +621,7 @@ export function reveiller() {
   try {
     if (!/^0x[0-9a-f]{40}$/.test(ADRESSE())) return false;
     if (minuteur) return true;
-    if (commandesActives() === 0) return false;
+    if (!doitContinuer()) return false;
     // ⛔ LE PREMIER TOUR NE S'ATTEND PAS. `reveiller()` est appelée depuis une
     //    route HTTP : l'attendre ferait patienter le visiteur pendant un aller
     //    -retour vers un noeud public. C'est le défaut que le lot 199 a fermé
@@ -553,7 +629,7 @@ export function reveiller() {
     scanner().catch(() => {});
     minuteur = setInterval(() => {
       try {
-        if (commandesActives() === 0) { clearInterval(minuteur); minuteur = null; return; }
+        if (!doitContinuer()) { clearInterval(minuteur); minuteur = null; return; }
         scanner().catch(() => {});
       } catch { /* une caisse ne tue jamais son serveur */ }
     }, PERIODE_MS());
@@ -597,12 +673,21 @@ export function etatDuMagasin() {
       dernierBloc: Number(lireSuivi('dernier_bloc')) || null,
       dernierScan: dernierBilan.quand,
       erreur: dernierBilan.erreur,
+      // 🚦 LOT 230 — ce qui reste écrit quand ça rate (relu dans la base).
+      echecsDeSuite: Number(lireSuivi('echecs_de_suite')) || 0,
+      derniereErreur: (() => { try { return JSON.parse(lireSuivi('derniere_erreur') || 'null'); } catch { return null; } })(),
+      dernierSucces: lireSuivi('dernier_succes'),
+      retardBlocs: (() => {
+        const t = Number(lireSuivi('tete_vue')); const b = Number(lireSuivi('dernier_bloc'));
+        return Number.isFinite(t) && Number.isFinite(b) && t > 0 && b > 0 ? Math.max(0, t - b) : null;
+      })(),
       branchee: Boolean(process.env.SESSION_API && process.env.ID_CAISSE),
     };
   } catch {
     return {
       ouverte: false, enAttente: null, payees: null, aAccorder: null, orphelins: null,
       dernierBloc: null, dernierScan: null, erreur: null,
+      echecsDeSuite: null, derniereErreur: null, dernierSucces: null, retardBlocs: null,
       branchee: Boolean(process.env.SESSION_API && process.env.ID_CAISSE),
     };
   }
