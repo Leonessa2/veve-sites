@@ -52,6 +52,49 @@ function verifie(titre, ok, detail) {
 // une empreinte du jeu de donnees produit.
 // ---------------------------------------------------------------------------
 const RUNNER = join(base, 'runner.mjs');
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🕰️ LOT 229 (26/11/2026) — L'HORLOGE DU BANC EST CELLE DU JEU D'ESSAI
+// ═══════════════════════════════════════════════════════════════════════════
+// MESURE DU 26/11 : tous les deploiements echouaient depuis le 23/10 au soir
+// sur « auto-controle : sommePoints 450 vs 450 avec public_max=10 ». Ni le
+// code ni l'echantillon n'avaient change. Le dernier releve de
+// `engine/data/sample/prices.csv` date du 27/07/2026 ; la porte ne garde que
+// les `public_days: 90` derniers jours COMPTES DEPUIS Date.now(). Rejoue avec
+// une horloge forcee : 23/10 midi = OK (354 vs 450), 24/10 midi = ECHEC
+// (450 vs 450). Passe ce seuil, plus aucun releve n'est dans la fenetre, chaque
+// fiche retombe sur ses 5 derniers releves (repli `tail`), et 10 ou 30 points
+// de plafond donnent le meme resultat : l'auto-controle n'avait plus rien a
+// mordre. ⭐⭐⭐ UN BANC QUI LIT L'HORLOGE MURALE SUR UN ECHANTILLON FIGE EST
+// UNE BOMBE A RETARDEMENT : vert le jour ou on l'ecrit, rouge trois mois apres,
+// sans qu'une ligne ait bouge.
+// ⭐ CORRECTIF : chaque scenario tourne avec une horloge posee au lendemain du
+// dernier releve de l'echantillon. Le banc mesure alors la meme chose
+// aujourd'hui et dans un an. Seuls les processus du banc sont touches ; le
+// build et le site gardent la vraie date.
+const LIGNES_PRIX = readFileSync(join(RACINE, 'engine', 'data', 'sample', 'prices.csv'), 'utf8').trim().split('\n');
+const COL_TS = LIGNES_PRIX[0].split(',').indexOf('ts_utc');
+let dernierReleve = -Infinity;
+for (const l of LIGNES_PRIX.slice(1)) {
+  const t = Date.parse(l.split(',')[COL_TS]);
+  if (Number.isFinite(t) && t > dernierReleve) dernierReleve = t;
+}
+if (!Number.isFinite(dernierReleve)) {
+  console.error('   ! impossible de dater l\'echantillon (prices.csv sans ts_utc lisible) : test invalide');
+  process.exit(1);
+}
+const HORLOGE_MS = dernierReleve + 24 * 3600 * 1000;
+const HORLOGE = join(base, 'horloge.mjs');
+writeFileSync(HORLOGE, `
+const T = ${HORLOGE_MS};
+const Vraie = Date;
+class Figee extends Vraie {
+  constructor(...a) { if (a.length) super(...a); else super(T); }
+  static now() { return T; }
+}
+globalThis.Date = Figee;
+`);
+console.log(`horloge du banc : ${new Date(HORLOGE_MS).toISOString()} (lendemain du dernier releve de l'echantillon)`);
 writeFileSync(RUNNER, `
 import { dataset } from ${JSON.stringify(join(RACINE, 'engine', 'lib', 'dataset.mjs'))};
 import { acces, porte, restant, auMoins, palierVisiteur, franchit } from ${JSON.stringify(join(RACINE, 'engine', 'lib', 'access.mjs'))};
@@ -123,7 +166,7 @@ function preparer(nom, manifesteYml) {
 
 function scenario(nom, manifesteYml) {
   const root = preparer(nom, manifesteYml);
-  const r = spawnSync(process.execPath, [RUNNER], {
+  const r = spawnSync(process.execPath, ['--import', HORLOGE, RUNNER], {
     cwd: RACINE,
     env: { ...process.env, PROJECT_ROOT: root, SITE: 'test', WAREHOUSE_OFFLINE: '1' },
     encoding: 'utf8',
@@ -191,6 +234,14 @@ try {
   }
   if (ancien.cachees === 0) {
     console.error(`   ! aucune fiche tronquee dans l'echantillon : le test ne peut rien prouver`);
+    process.exit(1);
+  }
+
+  // 🕰️ LOT 229 — garde-fou : l'auto-controle ci-dessous ne peut mordre que si
+  // au moins une fiche a PLUS de 10 points dans la fenetre. Sinon le banc est
+  // INDECIDABLE (jeu d'essai trop maigre), pas le code fautif : le dire tel quel.
+  if (ancien.maxPoints <= 10) {
+    console.error(`   ! aucune fiche ne depasse 10 points dans la fenetre (max ${ancien.maxPoints}) : l'auto-controle ne peut pas mordre, test invalide (echantillon ou horloge)`);
     process.exit(1);
   }
 
