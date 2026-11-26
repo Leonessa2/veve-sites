@@ -827,6 +827,106 @@ const PALIER = Object.keys(c.grille())[0];
   }
 }
 
+
+// ─── ㉒ LE RATTRAPAGE COUVRE 24 h DE TEMPS, QUEL QUE SOIT LE RYTHME DE BASE ──
+// 🕰️ LOT 230 (26/11/2026). Mesure du jour : Base est passé de 2 s à 0,2 s par
+//   bloc le 05/11. L'ancienne marge fixe de 45 000 blocs ne couvrait plus que
+//   ~2 h 30 : un paiement tombé 3 h avant un redémarrage était SAUTÉ, sans
+//   crédit ni orphelin. Ce banc rejoue un long arrêt à deux rythmes, et exige :
+//   (a) un paiement 16 h avant la tête est crédité (la commande attendait) ;
+//   (b) un versement 30 h avant la tête n'est PAS relu (la fenêtre est bornée) ;
+//   (c) si le noeud ne sait pas dater les blocs, la marge s'élargit (repli),
+//       elle ne rétrécit jamais ;
+//   (d) un horodatage aberrant (chaîne « lente » de 60 s/bloc) ne rétrécit pas
+//       la fenêtre sous 24 h comptées à 2,5 s/bloc.
+// ⭐ Contre-épreuve faite à l'écriture : avec l'ancien `BLOCS_MAX_RETARD =
+//   45000`, (a) rougit au rythme 0,2 s.
+{
+  const scenarioRythme = async ({ nom, spb, datable = true, tete, recul }) => {
+    const logs = [];
+    const H0 = 1_700_000_000;
+    let getLogs = 0;
+    noeud.removeAllListeners('request');
+    noeud.on('request', (req, res) => {
+      let corps = '';
+      req.on('data', (d) => { corps += d; });
+      req.on('end', () => {
+        res.writeHead(200, { 'content-type': 'application/json' });
+        const j = JSON.parse(corps || '{}');
+        const ok = (result) => res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result }));
+        if (j.method === 'eth_blockNumber') return ok('0x' + tete.toString(16));
+        if (j.method === 'eth_getBlockByNumber') {
+          if (!datable) return res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, error: { code: -32601, message: 'non' } }));
+          const b = Number.parseInt(j.params[0], 16);
+          return ok({ number: j.params[0], timestamp: '0x' + Math.floor(H0 + b * spb).toString(16) });
+        }
+        if (j.method === 'eth_getLogs') {
+          getLogs++;
+          const f = j.params[0];
+          const de = Number.parseInt(f.fromBlock, 16); const a = Number.parseInt(f.toBlock, 16);
+          if (a - de > 10000) return res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, error: { code: -32614, message: 'range' } }));
+          if (!String(f.address).includes(c.JETONS.usdc)) return ok([]);
+          return ok(logs.filter((l) => { const n = Number.parseInt(l.blockNumber, 16); return n >= de && n <= a; }));
+        }
+        return ok(null);
+      });
+    });
+    const blocsPour = (heures) => Math.round((heures * 3600) / spb);
+    const cmd = c.ouvrirCommande(`cpt-rythme-${nom}`, PALIER, 1);
+    const blocPaye = tete - blocsPour(recul);
+    logs.push({ transactionHash: `0xr${nom}a`, logIndex: '0x0', blockNumber: '0x' + blocPaye.toString(16), data: '0x' + (cmd.cents * 1e4).toString(16) });
+    const blocVieux = tete - blocsPour(30);
+    logs.push({ transactionHash: `0xr${nom}b`, logIndex: '0x0', blockNumber: '0x' + blocVieux.toString(16), data: '0x' + (777777 * 1e4).toString(16) });
+    const orphAvant = c.etatDuMagasin().orphelins;
+    abonnements = [];
+    const bilan = await c.scanner();
+    return { bilan, credite: abonnements.length === 1 && abonnements[0].reference === cmd.reference,
+      orphelinsAjoutes: c.etatDuMagasin().orphelins - orphAvant, getLogs, curseur: c.etatDuMagasin().dernierBloc };
+  };
+
+  // Le rythme d'aujourd'hui : 0,2 s/bloc, arrêt « depuis le 27/08 ».
+  let t = 6_000_000;
+  const r1 = await scenarioRythme({ nom: 'rapide', spb: 0.2, tete: t, recul: 16 });
+  dire(r1.bilan.erreur === null, '㉒ (0,2 s/bloc) le rattrapage aboutit', JSON.stringify(r1.bilan));
+  dire(r1.credite, '㉒ (0,2 s/bloc) un paiement fait 16 h avant la reprise est CRÉDITÉ',
+    '⛔ la marge ne couvre pas 24 h de temps : le paiement est sauté sans trace');
+  dire(r1.orphelinsAjoutes === 0, '㉒ (0,2 s/bloc) un versement de 30 h n\'est PAS relu (fenêtre bornée)',
+    `orphelins ajoutés = ${r1.orphelinsAjoutes}`);
+  dire(r1.curseur === t, '㉒ (0,2 s/bloc) le curseur rejoint la tête', `${r1.curseur} / ${t}`);
+
+  // L'ancien rythme : 2 s/bloc — la correction ne doit rien casser ici.
+  t += 2_000_000;
+  const r2 = await scenarioRythme({ nom: 'lent', spb: 2, tete: t, recul: 16 });
+  dire(r2.credite, '㉒ (2 s/bloc) un paiement fait 16 h avant la reprise est crédité');
+  dire(r2.orphelinsAjoutes === 0, '㉒ (2 s/bloc) un versement de 30 h n\'est pas relu',
+    `orphelins ajoutés = ${r2.orphelinsAjoutes}`);
+
+  // Repli : le noeud ne date pas les blocs ⇒ la marge s'ÉLARGIT (0,1 s/bloc).
+  t += 2_000_000;
+  const r3 = await scenarioRythme({ nom: 'muet', spb: 0.2, datable: false, tete: t, recul: 20 });
+  dire(r3.credite, '㉒ (noeud qui ne date pas) le paiement de 20 h est quand même crédité',
+    '⛔ le repli rétrécit la fenêtre au lieu de l\'élargir');
+
+  // Horodatage aberrant : 60 s/bloc annoncés. La fenêtre ne descend pas sous
+  //   24 h comptées à 2,5 s/bloc (borne) : un paiement 20 h avant, à 2 s/bloc
+  //   réels, reste couvert.
+  const n = await c.blocsDeRattrapage(1_000_000).catch(() => null);
+  noeud.removeAllListeners('request');
+  noeud.on('request', (req, res) => {
+    let corps = ''; req.on('data', (d) => { corps += d; });
+    req.on('end', () => {
+      const j = JSON.parse(corps || '{}');
+      const b = Number.parseInt((j.params || [])[0], 16) || 0;
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result: { timestamp: '0x' + (1_700_000_000 + b * 60).toString(16) } }));
+    });
+  });
+  const borne = await c.blocsDeRattrapage(1_000_000);
+  dire(borne >= Math.ceil((24 * 3600) / 2.5), '㉒ un horodatage aberrant ne rétrécit pas la fenêtre sous 24 h à 2,5 s/bloc',
+    `${borne} blocs (minimum ${Math.ceil((24 * 3600) / 2.5)})`);
+  dire(n !== null, '㉒ (la mesure du rythme ne lève jamais d\'exception)');
+}
+
 noeud.close();
 veveid.close();
 try { rmDossier(dossier, { recursive: true, force: true }); } catch { /* rien */ }

@@ -42,10 +42,31 @@ const TOPIC_TRANSFER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a
 //   caisse qui a pourtant reçu l'argent. On scanne donc par tranches.
 const TRANCHE_MAX = 9000;
 
-// ⚠️ Base produit ~1 bloc toutes les 2 s (mesuré : 280 blocs en 9 min 20).
-//   24 h ≈ 43 200 blocs. On ne remonte JAMAIS plus loin que ça : au-delà,
-//   aucune commande n'est plus reconnaissable de toute façon.
-const BLOCS_MAX_RETARD = 45000;
+// ═══════════════════════════════════════════════════════════════════════════
+// 🕰️ LOT 230 (26/11/2026) — LE RATTRAPAGE SE COMPTE EN TEMPS, PAS EN BLOCS
+// ═══════════════════════════════════════════════════════════════════════════
+// AVANT : `BLOCS_MAX_RETARD = 45000`, écrit le 25/08 quand Base produisait
+//   1 bloc toutes les 2 s (45 000 blocs ≈ 25 h).
+// MESURE DU 26/11 : Base est passé à **0,2 s par bloc le 05/11/2026 vers
+//   18 h UTC** (bloc ~53 556 102). Les mêmes 45 000 blocs ne couvraient plus
+//   que ~2 h 30. Un site arrêté plus de 2 h 30 pendant qu'une commande
+//   attendait aurait SAUTÉ un paiement réel — ni crédité, ni orphelin, aucune
+//   trace. ⭐⭐⭐ UNE DURÉE ÉCRITE EN NOMBRE D'UNITÉS D'UN TIERS N'EST PAS UNE
+//   DURÉE : c'est une hypothèse sur le rythme du tiers, qui change sans
+//   prévenir.
+// ⭐ MAINTENANT : la marge vaut LA FENÊTRE DE RECONNAISSANCE (`LIMITE_MS`,
+//   24 h) + 10 %, convertie en blocs AU MOMENT DU RATTRAPAGE, à partir du
+//   rythme mesuré sur les 10 000 derniers blocs (horodatages de la chaîne).
+// ⛔ SI LA MESURE ÉCHOUE, ON SE TROMPE DU CÔTÉ LARGE : repli sur un rythme
+//   plancher de 0,1 s/bloc (deux fois plus rapide que le plus rapide mesuré),
+//   donc une marge PLUS LONGUE que 24 h, jamais plus courte. Relire trop de
+//   blocs coûte des appels ; en relire trop peu coûte un paiement.
+// ⚠️ La mesure ne part QUE si le retard dépasse une tranche : en régime
+//   normal (un tour toutes les 30 s), elle ne coûte rien.
+const ECHANTILLON_RYTHME = 10000;
+const SECONDES_PAR_BLOC_PLANCHER = 0.1;
+const SECONDES_PAR_BLOC_PLAFOND = 2.5;
+const MARGE_RATTRAPAGE = 1.1;
 
 const RPC = () => process.env.CAISSE_RPC || 'https://mainnet.base.org';
 const ADRESSE = () => String(process.env.CAISSE_ADRESSE || '').trim().toLowerCase();
@@ -273,6 +294,32 @@ const versDecimal = (hexa) => {
   return Number.parseInt(hexa, 16);
 };
 
+// 🕰️ LOT 230 — combien de blocs couvrent `LIMITE_MS` (+10 %) AU RYTHME
+//   ACTUEL de la chaîne. Exportée pour le banc.
+export async function blocsDeRattrapage(courant) {
+  const dureeS = (LIMITE_MS * MARGE_RATTRAPAGE) / 1000;
+  const n = Math.min(ECHANTILLON_RYTHME, Math.max(0, courant - 1));
+  if (n > 0) {
+    const hexa = (b) => '0x' + b.toString(16);
+    const [a, b] = await Promise.all([
+      rpc('eth_getBlockByNumber', [hexa(courant - n), false]),
+      rpc('eth_getBlockByNumber', [hexa(courant), false]),
+    ]);
+    const ta = versDecimal(a.resultat && a.resultat.timestamp);
+    const tb = versDecimal(b.resultat && b.resultat.timestamp);
+    if (Number.isFinite(ta) && Number.isFinite(tb) && tb > ta) {
+      // ⛔ Un horodatage aberrant ne doit pas pouvoir RÉTRÉCIR la fenêtre :
+      //   la cadence retenue est bornée à 2,5 s/bloc (Base n'a jamais été
+      //   plus lent que 2 s). Plus lent que ça ⇒ on compte comme 2,5 s, donc
+      //   PLUS de blocs relus, jamais moins. Plus rapide : la fenêtre s'élargit
+      //   d'elle-même, ce qui est le bon côté de l'erreur.
+      const spb = Math.min((tb - ta) / n, SECONDES_PAR_BLOC_PLAFOND);
+      return Math.ceil(dureeS / Math.max(spb, 0.001));
+    }
+  }
+  return Math.ceil(dureeS / SECONDES_PAR_BLOC_PLANCHER);
+}
+
 // ⭐ 6 décimales chez les deux jetons ⇒ les cents sont le brut divisé par 10⁴.
 //   ⚠️ On ARRONDIT, on ne tronque pas : un acheteur qui envoie 6,009999 a
 //   payé plus que 6,00 — le tronquer le pénaliserait d'un centime pour une
@@ -385,7 +432,11 @@ export async function scanner() {
     }
     // ⚠️ Après un long arrêt, on ne remonte pas au-delà de la fenêtre de
     //   reconnaissance : ce qui est plus vieux ne peut plus rien ouvrir.
-    if (courant - depuis > BLOCS_MAX_RETARD) depuis = courant - BLOCS_MAX_RETARD;
+    //   🕰️ LOT 230 : cette fenêtre est une DURÉE, convertie en blocs ici.
+    if (courant - depuis > TRANCHE_MAX) {
+      const maxRetard = await blocsDeRattrapage(courant);
+      if (courant - depuis > maxRetard) depuis = Math.max(0, courant - maxRetard);
+    }
 
     const cible = '0x' + adresse.slice(2).padStart(64, '0');
     let vus = 0; let credites = 0; let blocs = 0;
