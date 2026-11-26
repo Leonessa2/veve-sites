@@ -314,6 +314,8 @@ const { mkdtempSync, rmSync: rmDossier } = await import('node:fs');
 const { tmpdir } = await import('node:os');
 const dossier = mkdtempSync(join(tmpdir(), 'veve-caisse-banc-'));
 process.env.CAISSE_DB = join(dossier, 'caisse.db');
+// 🚦 LOT 230 — pas de vraies pauses entre deux tentatives dans le banc.
+process.env.CAISSE_PAUSES_MS = '0,0';
 process.env.CAISSE_ADRESSE = ADRESSE_ESSAI;
 
 // ── LE FAUX veveid ──────────────────────────────────────────────────────────
@@ -596,7 +598,9 @@ const PALIER = Object.keys(c.grille())[0];
 {
   const e = c.etatDuMagasin();
   const PERMIS = ['ouverte', 'enAttente', 'payees', 'aAccorder', 'orphelins',
-    'dernierBloc', 'dernierScan', 'erreur', 'branchee'];
+    'dernierBloc', 'dernierScan', 'erreur', 'branchee',
+    // 🚦 LOT 230 — des compteurs, des heures et une cause, jamais un montant.
+    'echecsDeSuite', 'derniereErreur', 'dernierSucces', 'retardBlocs'];
   const enTrop = Object.keys(e).filter((k) => !PERMIS.includes(k));
   dire(enTrop.length === 0, '⑱ aucun champ hors de la liste blanche',
     enTrop.length ? enTrop.join(', ') : PERMIS.join(', '));
@@ -825,6 +829,183 @@ const PALIER = Object.keys(c.grille())[0];
       '㉑ …et un refus de l\'encodeur ne peut pas emporter toute la page /compte/',
       '⛔ sans le repli, une adresse trop longue casserait favoris, portes et suppression de compte');
   }
+}
+
+
+// ─── ㉒ LE RATTRAPAGE COUVRE 24 h DE TEMPS, QUEL QUE SOIT LE RYTHME DE BASE ──
+// 🕰️ LOT 230 (26/11/2026). Mesure du jour : Base est passé de 2 s à 0,2 s par
+//   bloc le 05/11. L'ancienne marge fixe de 45 000 blocs ne couvrait plus que
+//   ~2 h 30 : un paiement tombé 3 h avant un redémarrage était SAUTÉ, sans
+//   crédit ni orphelin. Ce banc rejoue un long arrêt à deux rythmes, et exige :
+//   (a) un paiement 16 h avant la tête est crédité (la commande attendait) ;
+//   (b) un versement 30 h avant la tête n'est PAS relu (la fenêtre est bornée) ;
+//   (c) si le noeud ne sait pas dater les blocs, la marge s'élargit (repli),
+//       elle ne rétrécit jamais ;
+//   (d) un horodatage aberrant (chaîne « lente » de 60 s/bloc) ne rétrécit pas
+//       la fenêtre sous 24 h comptées à 2,5 s/bloc.
+// ⭐ Contre-épreuve faite à l'écriture : avec l'ancien `BLOCS_MAX_RETARD =
+//   45000`, (a) rougit au rythme 0,2 s.
+{
+  const scenarioRythme = async ({ nom, spb, datable = true, tete, recul }) => {
+    const logs = [];
+    const H0 = 1_700_000_000;
+    let getLogs = 0;
+    noeud.removeAllListeners('request');
+    noeud.on('request', (req, res) => {
+      let corps = '';
+      req.on('data', (d) => { corps += d; });
+      req.on('end', () => {
+        res.writeHead(200, { 'content-type': 'application/json' });
+        const j = JSON.parse(corps || '{}');
+        const ok = (result) => res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result }));
+        if (j.method === 'eth_blockNumber') return ok('0x' + tete.toString(16));
+        if (j.method === 'eth_getBlockByNumber') {
+          if (!datable) return res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, error: { code: -32601, message: 'non' } }));
+          const b = Number.parseInt(j.params[0], 16);
+          return ok({ number: j.params[0], timestamp: '0x' + Math.floor(H0 + b * spb).toString(16) });
+        }
+        if (j.method === 'eth_getLogs') {
+          getLogs++;
+          const f = j.params[0];
+          const de = Number.parseInt(f.fromBlock, 16); const a = Number.parseInt(f.toBlock, 16);
+          if (a - de > 10000) return res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, error: { code: -32614, message: 'range' } }));
+          if (!String(f.address).includes(c.JETONS.usdc)) return ok([]);
+          return ok(logs.filter((l) => { const n = Number.parseInt(l.blockNumber, 16); return n >= de && n <= a; }));
+        }
+        return ok(null);
+      });
+    });
+    const blocsPour = (heures) => Math.round((heures * 3600) / spb);
+    const cmd = c.ouvrirCommande(`cpt-rythme-${nom}`, PALIER, 1);
+    const blocPaye = tete - blocsPour(recul);
+    logs.push({ transactionHash: `0xr${nom}a`, logIndex: '0x0', blockNumber: '0x' + blocPaye.toString(16), data: '0x' + (cmd.cents * 1e4).toString(16) });
+    const blocVieux = tete - blocsPour(30);
+    logs.push({ transactionHash: `0xr${nom}b`, logIndex: '0x0', blockNumber: '0x' + blocVieux.toString(16), data: '0x' + (777777 * 1e4).toString(16) });
+    const orphAvant = c.etatDuMagasin().orphelins;
+    abonnements = [];
+    const bilan = await c.scanner();
+    return { bilan, credite: abonnements.length === 1 && abonnements[0].reference === cmd.reference,
+      orphelinsAjoutes: c.etatDuMagasin().orphelins - orphAvant, getLogs, curseur: c.etatDuMagasin().dernierBloc };
+  };
+
+  // Le rythme d'aujourd'hui : 0,2 s/bloc, arrêt « depuis le 27/08 ».
+  let t = 6_000_000;
+  const r1 = await scenarioRythme({ nom: 'rapide', spb: 0.2, tete: t, recul: 16 });
+  dire(r1.bilan.erreur === null, '㉒ (0,2 s/bloc) le rattrapage aboutit', JSON.stringify(r1.bilan));
+  dire(r1.credite, '㉒ (0,2 s/bloc) un paiement fait 16 h avant la reprise est CRÉDITÉ',
+    '⛔ la marge ne couvre pas 24 h de temps : le paiement est sauté sans trace');
+  dire(r1.orphelinsAjoutes === 0, '㉒ (0,2 s/bloc) un versement de 30 h n\'est PAS relu (fenêtre bornée)',
+    `orphelins ajoutés = ${r1.orphelinsAjoutes}`);
+  dire(r1.curseur === t, '㉒ (0,2 s/bloc) le curseur rejoint la tête', `${r1.curseur} / ${t}`);
+
+  // L'ancien rythme : 2 s/bloc — la correction ne doit rien casser ici.
+  t += 2_000_000;
+  const r2 = await scenarioRythme({ nom: 'lent', spb: 2, tete: t, recul: 16 });
+  dire(r2.credite, '㉒ (2 s/bloc) un paiement fait 16 h avant la reprise est crédité');
+  dire(r2.orphelinsAjoutes === 0, '㉒ (2 s/bloc) un versement de 30 h n\'est pas relu',
+    `orphelins ajoutés = ${r2.orphelinsAjoutes}`);
+
+  // Repli : le noeud ne date pas les blocs ⇒ la marge s'ÉLARGIT (0,1 s/bloc).
+  t += 2_000_000;
+  const r3 = await scenarioRythme({ nom: 'muet', spb: 0.2, datable: false, tete: t, recul: 20 });
+  dire(r3.credite, '㉒ (noeud qui ne date pas) le paiement de 20 h est quand même crédité',
+    '⛔ le repli rétrécit la fenêtre au lieu de l\'élargir');
+
+  // Horodatage aberrant : 60 s/bloc annoncés. La fenêtre ne descend pas sous
+  //   24 h comptées à 2,5 s/bloc (borne) : un paiement 20 h avant, à 2 s/bloc
+  //   réels, reste couvert.
+  const n = await c.blocsDeRattrapage(1_000_000).catch(() => null);
+  noeud.removeAllListeners('request');
+  noeud.on('request', (req, res) => {
+    let corps = ''; req.on('data', (d) => { corps += d; });
+    req.on('end', () => {
+      const j = JSON.parse(corps || '{}');
+      const b = Number.parseInt((j.params || [])[0], 16) || 0;
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result: { timestamp: '0x' + (1_700_000_000 + b * 60).toString(16) } }));
+    });
+  });
+  const borne = await c.blocsDeRattrapage(1_000_000);
+  dire(borne >= Math.ceil((24 * 3600) / 2.5), '㉒ un horodatage aberrant ne rétrécit pas la fenêtre sous 24 h à 2,5 s/bloc',
+    `${borne} blocs (minimum ${Math.ceil((24 * 3600) / 2.5)})`);
+  dire(n !== null, '㉒ (la mesure du rythme ne lève jamais d\'exception)');
+}
+
+
+// ─── ㉓ UN NŒUD QUI REFUSE : NOUVELLE TENTATIVE, TRACE ÉCRITE, SUIVI QUI DURE ─
+// 🚦 LOT 230 (26/11/2026). Mesure du jour, depuis le conteneur veveprice :
+//   `mainnet.base.org` répond 429 « request limit reached » à toutes les
+//   lectures `eth_getLogs`. Avant ce lot : refus confondu avec « http », trace
+//   effacée au succès suivant, et suivi ARRÊTÉ dès que la commande expirait —
+//   un paiement de la fenêtre n'était alors ni crédité ni orphelin.
+{
+  const { DatabaseSync } = await import('node:sqlite');
+  let refusRestants = 0; let toujoursRefuser = false; let tete = 20_000_000;
+  // ⚠️ Au-dessus du curseur laissé par ㉒ (10 000 000) : sinon il n'y a rien à lire.
+  const logs = [];
+  noeud.removeAllListeners('request');
+  noeud.on('request', (req, res) => {
+    let corps = ''; req.on('data', (d) => { corps += d; });
+    req.on('end', () => {
+      const j = JSON.parse(corps || '{}');
+      if (j.method === 'eth_blockNumber') { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result: '0x' + tete.toString(16) })); return; }
+      if (j.method === 'eth_getBlockByNumber') { res.writeHead(200, { 'content-type': 'application/json' }); const b = Number.parseInt(j.params[0], 16); res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result: { timestamp: '0x' + Math.floor(1_700_000_000 + b * 0.2).toString(16) } })); return; }
+      if (toujoursRefuser || refusRestants > 0) {
+        refusRestants = Math.max(0, refusRestants - 1);
+        res.writeHead(429, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, error: { code: -32011, message: 'request limit reached' } }));
+        return;
+      }
+      res.writeHead(200, { 'content-type': 'application/json' });
+      const f = j.params[0]; const de = Number.parseInt(f.fromBlock, 16); const a = Number.parseInt(f.toBlock, 16);
+      const r = String(f.address).includes(c.JETONS.usdc) ? logs.filter((l) => { const n = Number.parseInt(l.blockNumber, 16); return n >= de && n <= a; }) : [];
+      res.end(JSON.stringify({ jsonrpc: '2.0', id: 1, result: r }));
+    });
+  });
+
+  // (a) deux refus passagers puis une réponse : le paiement passe DANS LE MÊME tour.
+  await c.scanner(); // rejoindre la tête (rattrapage borné à 24 h)
+  const cmdB = c.ouvrirCommande('cpt-reprise-b', PALIER, 1);
+  tete += 50;
+  logs.push({ transactionHash: '0xrepB', logIndex: '0x0', blockNumber: '0x' + (tete - 5).toString(16), data: '0x' + (cmdB.cents * 1e4).toString(16) });
+  refusRestants = 2; abonnements = [];
+  const bA = await c.scanner();
+  dire(bA.erreur === null && abonnements.some((x) => x.reference === cmdB.reference),
+    '㉓ deux refus 429 passagers puis une réponse : le paiement est crédité dans le même tour',
+    `erreur=${bA.erreur} crédits=${abonnements.length}`);
+
+  // (b) refus persistant : cause « limite », trace écrite, retard visible.
+  toujoursRefuser = true;
+  const avant = c.etatDuMagasin().dernierBloc;
+  tete += 20_000;
+  const bB = await c.scanner();
+  const eB = c.etatDuMagasin();
+  dire(bB.erreur === 'limite', '㉓ un 429 se nomme « limite », pas « http »', String(bB.erreur));
+  dire(eB.dernierBloc === avant, '㉓ ...le curseur n\'avance pas', `${avant} → ${eB.dernierBloc}`);
+  dire(eB.echecsDeSuite >= 1 && eB.derniereErreur?.cause === 'limite' && Boolean(eB.derniereErreur?.quand),
+    '㉓ ...l\'échec est ÉCRIT : compte, cause et heure', JSON.stringify({ n: eB.echecsDeSuite, e: eB.derniereErreur }));
+  dire(eB.retardBlocs >= 20_000, '㉓ ...et le retard en blocs se voit', String(eB.retardBlocs));
+
+  // (c) plus aucune commande n'attend : le suivi CONTINUE tant qu'il échoue (≤ 24 h).
+  const base = new DatabaseSync(process.env.CAISSE_DB);
+  base.exec("UPDATE commandes SET limite_a = 0 WHERE etat = 'ouverte'");
+  dire(c.commandesActives() === 0, '㉓ (plus aucune commande n\'attend)');
+  dire(c.doitContinuer() === true, '㉓ ...mais le suivi en échec CONTINUE de tourner',
+    '⛔ le minuteur s\'arrête à l\'expiration de la commande : le paiement est oublié');
+  const vrai = base.prepare("SELECT valeur FROM caisse_suivi WHERE cle = 'premier_echec'").get().valeur;
+  base.prepare("UPDATE caisse_suivi SET valeur = ? WHERE cle = 'premier_echec'").run(String(Date.now() - 25 * 3600 * 1000));
+  dire(c.doitContinuer() === false, '㉓ ...et s\'arrête au-delà de 24 h d\'échec (plus rien à rattraper)');
+  base.prepare("UPDATE caisse_suivi SET valeur = ? WHERE cle = 'premier_echec'").run(vrai);
+
+  // (d) le nœud répond de nouveau : rattrapage, compteur remis à zéro, trace gardée.
+  toujoursRefuser = false;
+  const bD = await c.scanner();
+  const eD = c.etatDuMagasin();
+  dire(bD.erreur === null && eD.echecsDeSuite === 0 && Boolean(eD.dernierSucces),
+    '㉓ le nœud répond : succès noté, compteur à zéro', JSON.stringify({ e: bD.erreur, n: eD.echecsDeSuite }));
+  dire(eD.derniereErreur?.cause === 'limite', '㉓ ...et la dernière erreur reste lisible, avec son heure');
+  dire(c.doitContinuer() === false, '㉓ ...et sans commande ni échec, le suivi se rendort');
+  base.close();
 }
 
 noeud.close();
