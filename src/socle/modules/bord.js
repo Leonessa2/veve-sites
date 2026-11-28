@@ -151,7 +151,10 @@
       var g = jauges[j];
       var cj = cotes[g.getAttribute('data-jauge')];
       if (!cj) continue;
-      var lo = Number(cj.atl); var hi = Number(cj.ath); var fo = Number(cj.floor);
+      // ⛔ 28/11/2026 — `Number(null)` VAUT 0 : un ATL vide (permis par
+      //    `CONTRAT.md`) aurait planté la jauge sur « 0 $ ». Vide = pas de jauge.
+      var vu = function (x) { return (x === null || x === undefined || x === '') ? NaN : Number(x); };
+      var lo = vu(cj.atl); var hi = vu(cj.ath); var fo = vu(cj.floor);
       // ⛔ `hi > lo` STRICTEMENT : une pièce dont l'ATL vaut l'ATH n'a pas de
       //    place à montrer, et la division rendrait l'infini. Elle garde sa
       //    jauge vide plutôt qu'un curseur planté à 0 %, qui se lirait « au

@@ -539,11 +539,11 @@ async function construireDataset() {
     return Number.isFinite(n) && n >= 0 ? n : defaut;
   };
   const ECART_PRIX   = nbReglage(pub.outlier_price, 5000);
-  const ECART_OFFRES = nbReglage(pub.outlier_listings, 2);
+  const ECART_HAUT   = nbReglage(pub.outlier_unsupported_max, 15000);
   const ECART_POINTS = nbReglage(pub.outlier_min_points, 20);
   // ⭐ UN SEUL OBJET, PASSÉ À LA RÈGLE. Quatre arguments positionnels auraient
   //   fini par s'inverser — et deux d'entre eux sont des nombres du même ordre.
-  const SEUILS_ECART = { prix: ECART_PRIX, offres: ECART_OFFRES,
+  const SEUILS_ECART = { prix: ECART_PRIX, haut: ECART_HAUT,
                          points: ECART_POINTS, facteur: FACTEUR_ABERRANT };
   const CHANGE = { minPoints: 5, minRef: 1, maxAbs: 300 };
 
@@ -617,8 +617,14 @@ async function construireDataset() {
     memoire.pointDeBoucle('lecture des prix');
     const u = cols[idx.uuid];
     if (!u || !known.has(u)) return;   // on ignore ce qui n'est pas au catalogue
-    const f = Number(cols[idx.floor]);
-    if (!Number.isFinite(f)) return;
+    // 🔴 28/11/2026 — « FLOOR VIDE = PAS DE POINT » (brouillon de `CONTRAT.md`,
+    //   section 3.1 : « pas d'offre = case vide, jamais 0 »). `Number('')`
+    //   vaut 0 : une case vide devenait un point à 0 $, la courbe plongeait.
+    //   `numRenseigne` rend `null` pour une case vide ou illisible ; la ligne
+    //   est alors ignorée (ni point, ni compte de relevés). Un vrai 0 écrit par
+    //   le Scrapeur reste lu tel quel (le contrat l'interdit, il le refusera).
+    const f = numRenseigne(cols[idx.floor]);
+    if (f === null) return;
     const ts = cols[idx.ts];
     let a = agg.get(u);
     if (!a) { a = { n: 0, first: ts, buckets: new Map(), tail: [] }; agg.set(u, a); }
@@ -907,8 +913,14 @@ async function construireDataset() {
       // Un catalogue qui renvoie 0 veut dire « je ne sais pas », pas « zero ».
       // `??` ne rattrape PAS un 0 : la fiche affichait « plus haut historique : 0 »
       // juste au-dessus d'un prix a 42 000 milliards.
-      ath: pos(c.ath) ?? pos(b.floor_max),
-      atl: pos(c.atl) ?? pos(b.floor_min),
+      // 🔴 28/11/2026 — « ATH/ATL VIDE = RIEN D'AFFICHÉ » (brouillon de
+      //   `CONTRAT.md`, section 3.3). Le repli sur `floor_max` / `floor_min` des
+      //   baselines est RETIRÉ : ces colonnes ne sont pas filtrées (mesuré le
+      //   26/11 : 999 999 999, 168 000 000), et le Scrapeur laisse désormais
+      //   l'ATH vide exprès quand aucun floor du jour n'est valide. Vide ⇒
+      //   `null` ⇒ les gabarits n'affichent rien.
+      ath: pos(c.ath),
+      atl: pos(c.atl),
       // 📅 Les dates des extrêmes. ⭐ Sans elles, « plus haut : 1 750 » ne dit
       // pas QUAND — et c'est la date qui transforme un nombre en information.
       // ⚠️ Repli sur les bornes de la baseline si le catalogue ne les a pas :
@@ -1969,7 +1981,7 @@ async function construireDataset() {
   //   tient : aucun montant ne sort d'ici.
   const candidatsEcart = items.filter((i) => Number(i.floor) > ECART_PRIX).length;
   console.log(`[vitrine] planchers ecartes du marche : ${ecartes} sur ${items.length} `
-    + `(> ${ECART_PRIX} avec <= ${ECART_OFFRES} offre(s) SI son passe ne peut pas la defendre, `
+    + `(> ${ECART_HAUT} SI son passe ne peut pas la defendre, `
     + `ou plus de ${FACTEUR_ABERRANT}x sa mediane DANS TOUS LES CAS) — reaffichables par la case « ${'prix non retenus'} »`
     + ` · ${candidatsEcart} piece(s) EXAMINEE(S) (plancher > ${ECART_PRIX})`
     + `${candidatsEcart && !ecartes ? ' 🔴 EXAMINEES SANS AUCUNE RETENUE — la regle ne mord plus' : ''}`);
