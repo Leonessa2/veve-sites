@@ -504,8 +504,19 @@ if (!existsSync(MARCHE_FICHIER)) {
 
   if (resume) {
     lus += Object.keys(resume).length;
-    const inconnus = Object.entries(resume).filter(([, v]) => v === null).map(([k]) => k);
-    verifie('aucun champ du résumé n\'est INCONNU sur un vrai build',
+    // 🔴 28/11/2026 — `CONTRAT.md` : le nombre d'offres est publié VIDE
+    //   (inconnu). Les TROIS champs d'offres, et eux seuls, ont le droit
+    //   d'être `null` — et alors TOUS LES TROIS (sinon : 0 offre sans date, la
+    //   tuile qui ment ou qui disparaît). Tout autre champ `null` reste rouge.
+    const OFFRES = ['offres', 'offresPieces', 'offresLe'];
+    const offresNull = OFFRES.filter((k) => resume[k] === null);
+    verifie('champs d\'offres : tous connus, ou tous INCONNUS ensemble (jamais « 0 sans date »)',
+      offresNull.length === 0 || offresNull.length === OFFRES.length,
+      offresNull.length === 0 ? 'offres connues'
+        : offresNull.length === OFFRES.length ? 'offres inconnues (contrat) : la tuile dira « — »'
+        : `🔴 seuls ${offresNull.join(', ')} sont null — ${OFFRES.filter((k) => !offresNull.includes(k)).map((k) => `${k}=${JSON.stringify(resume[k])}`).join(', ')}`);
+    const inconnus = Object.entries(resume).filter(([k, v]) => v === null && !OFFRES.includes(k)).map(([k]) => k);
+    verifie('aucun champ du résumé n\'est INCONNU sur un vrai build (hors offres)',
       inconnus.length === 0,
       inconnus.length
         ? `🔴 ${inconnus.join(', ')} — écrits \`null\` par deposerMarche() : la tuile disparaîtra sans un mot.\n`

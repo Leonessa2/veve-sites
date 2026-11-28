@@ -1913,8 +1913,15 @@ async function construireDataset() {
   //   pièce « en vente » — la compter gonflerait le dénominateur de la seule
   //   phrase que la case porte : « N offres sur M pièces ».
   const offresLignes = items.filter((i) => Number.isFinite(i.listings) && i.listings > 0);
-  const offres = offresLignes.reduce((n, i) => n + i.listings, 0);
-  const offresPieces = offresLignes.length;
+  // 🔴 28/11/2026 — `CONTRAT.md` : `listings` VIDE = INCONNU, publié vide pour
+  //   toutes les fiches depuis la publication 1 (7 h 40). Aucune fiche à
+  //   nombre d'offres CONNU ⇒ les trois champs de la tuile sont `null`
+  //   (« pas compté »), jamais « 0 offre » : la tuile du tableau de bord dit
+  //   alors « — » (`etat: 'non-servi'`, `pouls.mjs`). Un vrai 0 (des fiches
+  //   connues, aucune > 0) reste 0.
+  const offresConnues = items.some((i) => Number.isFinite(i.listings));
+  const offres = offresConnues ? offresLignes.reduce((n, i) => n + i.listings, 0) : null;
+  const offresPieces = offresConnues ? offresLignes.length : null;
   // 📅 ET LA CASE PORTE SA PROPRE DATE, QUI N'EST PAS CELLE DES TRANSFERTS.
   // ⭐ `releveLe` est le champ de FRAÎCHEUR de la fiche — « quand on a
   //   regardé » — et il survit à `projeterCote()` (`CHAMPS_FRAICHEUR`, jamais
@@ -1926,7 +1933,8 @@ async function construireDataset() {
   const offresLe = offresLignes.reduce((m, i) =>
     (typeof i.releveLe === 'string' && i.releveLe > m ? i.releveLe : m), '') || null;
   console.log(`[marche] offres en vente : ${offres} annonce(s) sur ${offresPieces} piece(s)`
-    + (offresPieces === 0 ? ' 🔴 AUCUNE — la case « offres en vente » du tableau de bord dira « non collecté »' : ''));
+    + (offres === null ? ' — INCONNU (aucun nombre d\'offres publié) : la case du tableau de bord dira « — »'
+      : offresPieces === 0 ? ' 🔴 AUCUNE — la case « offres en vente » du tableau de bord dira « non collecté »' : ''));
   // ⭐ LE JOURNAL DIT DESORMAIS « projetee(s) », PAS « rendue(s) ». Le mot
   // comptait : depuis le lot 155-C ce nombre n'est plus ce que la page rend,
   // c'est ce que le filtre du serveur peut voir. Un journal qui garde l'ancien
