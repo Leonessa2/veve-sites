@@ -624,7 +624,14 @@ async function construireDataset() {
     if (!a) { a = { n: 0, first: ts, buckets: new Map(), tail: [] }; agg.set(u, a); }
     a.n++;
     if (ts < a.first) a.first = ts;
-    const pt = { ts, floor: f, listings: Number(cols[idx.listings]) || 0 };
+    // 🔴 « CASE VIDE = INCONNU, JAMAIS 0 » (27/11/2026). `Number('') || 0`
+    //   changeait une case vide en « 0 offre », et ce 0 remontait jusqu'à la
+    //   fiche par le repli de `listings` plus bas (`?? publicHist…listings`).
+    //   `numRenseigne` rend `null` pour une case vide ou illisible ; un vrai
+    //   « 0 » écrit par le Scrapeur reste 0. La réserve écrit toujours 0 pour
+    //   « pas su » (`reserve.point`, `|| 0`) et la courbe ne trace rien dans ce
+    //   cas (`cote.mjs`) : rien ne change de ce côté-là.
+    const pt = { ts, floor: f, listings: numRenseigne(cols[idx.listings]) };
     // ⛔ UNE SEULE LIGNE, ET ELLE EST À SA PLACE. C'est le seul endroit du
     // moteur où chaque relèvé passe une fois et une seule. La réserve
     // bufferise et vide sur disque : la promesse de l'en-tête de cette
@@ -1298,7 +1305,9 @@ async function construireDataset() {
     // rend `null`, jamais un nombre qu'il faudrait ensuite ecarter a l'ecran.
     item.amplitude = (item.atl > 0 && item.ath > 0 && item.atl <= item.ath)
       ? item.ath / item.atl : null;
-    item.offreUnique = (item.listings ?? 0) <= 1;
+    // ⛔ Une offre INCONNUE n'est pas « une seule offre » : `null ?? 0` aurait
+    //   allumé l'alerte sur toutes les fiches dont on ne sait rien.
+    item.offreUnique = Number.isFinite(item.listings) && item.listings <= 1;
     item.score = scoreUtilite(item);
     candidates.push(item);
   }

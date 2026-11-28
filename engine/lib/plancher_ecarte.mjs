@@ -52,7 +52,12 @@ export function planchierEcarte(i, seuils) {
   // ⛔ `Number.isFinite` ET PAS UNE VÉRITÉ : `listings: 0` est une VRAIE valeur,
   //    et c'est même le cas le plus net — un plancher à sept chiffres que plus
   //    personne ne porte. Un `if (i.listings)` l'aurait laissé passer.
-  const offres = Number.isFinite(Number(i.listings)) ? Number(i.listings) : null;
+  // ⛔ ET PAS `Number(null)` : il vaut 0. Une offre inconnue (`null`, case
+  //    vide) resterait sinon comptée comme « zéro offre » (27/11/2026).
+  const brut = i.listings;
+  const offres = (brut === null || brut === undefined || String(brut).trim() === '')
+    ? null
+    : (Number.isFinite(Number(brut)) ? Number(brut) : null);
   const floor = Number(i.floor);
   if (!Number.isFinite(floor) || floor <= seuils.prix) return false;
 

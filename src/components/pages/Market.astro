@@ -1512,7 +1512,7 @@ const ILE_TUILES = JSON.stringify({
               disparaîtrait le jour où quelqu'un l'y ajoute par symétrie. */}
           <td class="n" data-prix><span class="m2">
             <span class="m2__a"><span class="num"><Fragment set:html={gemsU} /> {money(i.floor)}</span>
-              {i.listings <= 1 && <span class="alerte" title={t(lang, 'item.outlier')}>!</span>}</span>
+              {Number.isFinite(i.listings) && i.listings <= 1 && <span class="alerte" title={t(lang, 'item.outlier')}>!</span>}</span>
             {/* 🔑 LOT 220 — LE PLANCHER STACKR REMPLACE SON TIRET « EN ATTENTE ».
                 ⭐⭐ ET LE `data-attente` PART AVEC LUI SUR LES DEUX LIGNES, C'EST
                 TOUT L'ENJEU : il voulait dire « pas encore collecte », ce qui
