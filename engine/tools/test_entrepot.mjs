@@ -80,6 +80,10 @@ const ENV_BASE = {
   WAREHOUSE_OFFLINE: null,
   ALLOW_SAMPLE: null,
   WAREHOUSE_REFUSE_PREV: null,
+  // ⭐ 28/11/2026 — les §§ 1 à 5 jugent le chemin `prices` : le floor du jour
+  //   y est coupé, sinon le faux réseau (qui répond à TOUT) le servirait.
+  FLOORS_JOUR: '0',
+  FLOORS_JOUR_URL: null,
 };
 
 console.log('\n=== Banc de l\'entrepot : le repli N-1 ===\n');
@@ -163,6 +167,35 @@ console.log('\n4. Repli sur la release N-1 (prix, lecture en flux)');
 //    `try`. Un refus mal place aurait ete avale, puis la fonction serait
 //    tombee sur l'echantillon local — run vert, prix d'exemple en ligne.
 // --------------------------------------------------------------------------
+console.log('\n4 bis. Le floor du jour (28/11/2026) : lui SEUL, ou prices en secours');
+{
+  const FJ = 'https://exemple.invalide/frais/floors_jour.csv.gz';
+  const CSV_FJ = 'veve_uuid,date,floor,floor_suspect\nu1,2026-07-29,12.5,\nu1,2026-07-30,9e6,oui\nu2,2026-07-29,40,\n';
+  // (a) présent ⇒ lu SEUL, prices jamais demandé
+  let demandes = [];
+  globalThis.fetch = async (url) => { demandes.push(url);
+    if (url === FJ) return new Response(gzipSync(CSV_FJ), { status: 200 });
+    return new Response(gzipSync(url.includes('prices') ? CSV_PRIX : CSV_CATALOGUE), { status: 200 }); };
+  let w = await chargerEntrepot({ ...ENV_BASE, FLOORS_JOUR: null, FLOORS_JOUR_URL: FJ });
+  const vus = [];
+  let n = await w.streamPrices((cols, idx) => { vus.push([cols[idx.uuid], cols[idx.date], cols[idx.floor], cols[idx.suspect]]); });
+  ok(n === 3 && w.sourceCourbes === 'floors-jour' && !demandes.some((u) => u.includes('prices')),
+    'floor du jour présent : lu SEUL (3 lignes), prices.csv.gz jamais demandé');
+  ok(vus[1][1] === '2026-07-30' && vus[1][3] === 'oui' && vus[0][3] === '',
+    'les colonnes date et floor_suspect arrivent par leur NOM');
+  // (b) absent (404) ⇒ prices, comme avant
+  demandes = [];
+  globalThis.fetch = async (url) => { demandes.push(url);
+    if (url === FJ) return new Response('', { status: 404 });
+    return new Response(gzipSync(url.includes('prices') ? CSV_PRIX : CSV_CATALOGUE), { status: 200 }); };
+  w = await chargerEntrepot({ ...ENV_BASE, FLOORS_JOUR: null, FLOORS_JOUR_URL: FJ });
+  const c = capturerWarn();
+  n = await w.streamPrices(() => {});
+  c.rendre();
+  ok(n === 2 && w.sourceCourbes === 'prices' && c.lignes.some((l) => l.includes('floor du jour : ABSENT')),
+    'floor du jour absent : prices.csv.gz lu (2 lignes), et c\'est DIT');
+}
+
 console.log('\n5. Le refus n\'est pas avale par le catch (prix)');
 {
   poserReseau({ fraicheOK: false });

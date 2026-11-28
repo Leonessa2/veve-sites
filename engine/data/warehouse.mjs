@@ -24,6 +24,14 @@ const SOURCES = {
     prev: base('prices-full-prev', 'prices.csv.gz'),
     sample: 'prices.csv',
   },
+  // 📈 28/11/2026 — LE FLOOR DU JOUR (`CONTRAT.md`, section 3.7). Une ligne
+  //   par fiche et par jour OÙ LA VALEUR CHANGE : `veve_uuid,date,floor,
+  //   floor_suspect`. ⭐ DÉCISION DU RELECTEUR : c'est la source des courbes
+  //   À LA PLACE de `prices` — jamais les deux (mémoire du build). Lu par
+  //   `streamPrices()` ; s'il manque, `prices` reprend (voir là-bas).
+  floorsJour: {
+    url: process.env.FLOORS_JOUR_URL || base('floors-jour', 'floors_jour.csv.gz'),
+  },
   baselines: {
     url: process.env.BASELINES_URL || base('prices-full', 'prices_baselines.csv.gz'),
     prev: base('prices-full-prev', 'prices_baselines.csv.gz'),
@@ -656,8 +664,55 @@ async function consumeStream(stream, onRow, faireIdx = IDX_PRIX) {
   return n;
 }
 
+// 📈 L'index du floor du jour. Par NOM, comme les autres. `ts` vaut -1 : la
+//   ligne porte une DATE (`date`, AAAA-MM-JJ), que le lecteur change en minuit
+//   UTC. `listings` vaut -1 : ce fichier ne porte pas d'offres.
+const IDX_JOUR = (h) => ({
+  uuid: h.indexOf('veve_uuid'),
+  ts: -1,
+  date: h.indexOf('date'),
+  floor: h.indexOf('floor'),
+  listings: -1,
+  suspect: h.indexOf('floor_suspect'),
+});
+
+// ⭐ D'où viennent les courbes de CE build : « floors-jour » ou « prices ».
+export let sourceCourbes = null;
+
 export async function streamPrices(onRow) {
   const src = SOURCES.prices;
+  // ═══ 28/11/2026 — D'ABORD LE FLOOR DU JOUR, ET SEULEMENT LUI ═══════════════
+  // ⛔ JAMAIS LES DEUX FICHIERS DANS LE MÊME BUILD (décision du relecteur :
+  //   la mémoire n'y suffirait pas). `floors-jour` lu ⇒ on sort. Absent
+  //   (release pas encore publiée, panne) ⇒ on le DIT, puis `prices` comme
+  //   avant : l'ordre de publication du réseau met ce code en ligne AVANT la
+  //   première release `floors-jour`.
+  // ⚠️ Pas de N-1 ni d'échantillon pour lui : son secours, c'est `prices`.
+  if (!OFFLINE && process.env.FLOORS_JOUR !== '0') {
+    const url = SOURCES.floorsJour.url;
+    let lues = -1;
+    let vues = 0;
+    try {
+      const res = await fetch(url, { redirect: 'follow' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      let stream = Readable.fromWeb(res.body);
+      if (url.endsWith('.gz')) stream = stream.pipe(createGunzip());
+      lues = await consumeStream(stream, (c, i) => { vues++; onRow(c, i); }, IDX_JOUR);
+    } catch (e) {
+      // ⛔ Un échec EN COURS de lecture laisserait des lignes déjà vues : on
+      //   ne peut pas relire `prices` par-dessus sans doubler les points.
+      if (vues > 0) {
+        throw new Error(`[entrepot] floor du jour : lecture interrompue (${e.message}). Build interrompu volontairement.`);
+      }
+      console.warn(`[entrepot] floor du jour : ABSENT (${e.message}) — courbes depuis prices.csv.gz, comme avant`);
+    }
+    if (lues >= 0) {
+      sourceCourbes = 'floors-jour';
+      console.log(`[entrepot] floor du jour : ${lues} lignes lues EN FLUX depuis ${url} — prices.csv.gz NON lu`);
+      return lues;
+    }
+  }
+  sourceCourbes = 'prices';
   if (!OFFLINE) {
     const urls = [src.url, src.prev];
     let rangLu = -1;

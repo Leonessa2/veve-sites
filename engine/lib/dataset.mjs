@@ -21,7 +21,7 @@ import * as memoire from './memoire.mjs';
 import { deposerVignettes } from './vignettes.mjs';
 import { deposerSetsMcp } from './sets_mcp.mjs';
 import { deposerRayonIndex } from './rayon_index.mjs';
-import { getCatalogue, getBaselines, getReleves, getFichesStackr, getOmiUsd, getVentes, getExtremesStackr, streamPrices, vuLe } from '../data/warehouse.mjs';
+import { getCatalogue, getBaselines, getReleves, getFichesStackr, getOmiUsd, getVentes, getExtremesStackr, streamPrices, sourceCourbes, vuLe } from '../data/warehouse.mjs';
 // 💱 LOT 181 — le cours OMI → USD, déposé dans la réserve pour `/api/cote/lot`.
 //    Toute la règle (péremption, refus du zéro) vit dans le module ; ici il
 //    n'y a qu'un chargement et un dépôt.
@@ -625,7 +625,16 @@ async function construireDataset() {
     //   le Scrapeur reste lu tel quel (le contrat l'interdit, il le refusera).
     const f = numRenseigne(cols[idx.floor]);
     if (f === null) return;
-    const ts = cols[idx.ts];
+    // 📈 28/11/2026 — LE FLOOR DU JOUR (`floors-jour`, `CONTRAT.md` 3.7).
+    //   ⭐ Un jour SUSPECT n'est pas tracé (RESEAU, règle 7 : « un trou, pas un
+    //   pic ») : ni point, ni compte de relevés. ⚠️ Le fichier n'écrit qu'aux
+    //   changements : la courbe relie le dernier jour sain au suivant, elle ne
+    //   montre pas de blanc (un vrai blanc demande de retoucher le graphique,
+    //   chantier 4 à part).
+    //   La ligne porte une DATE : on la lit à minuit UTC. `prices` (secours)
+    //   garde son horodatage, inchangé (`idx.date` n'y existe pas).
+    if (idx.suspect >= 0 && String(cols[idx.suspect] ?? '').trim() !== '') return;
+    const ts = idx.date >= 0 ? `${cols[idx.date]}T00:00:00Z` : cols[idx.ts];
     let a = agg.get(u);
     if (!a) { a = { n: 0, first: ts, buckets: new Map(), tail: [] }; agg.set(u, a); }
     a.n++;
@@ -656,7 +665,9 @@ async function construireDataset() {
     }
   });
 
-  memoire.jalon(`prix agreges (${agg.size} items suivis)`);
+  // ⭐ La source des courbes est ÉCRITE dans le jalon : `/api/sante` la sert
+  //   (`memoire.etapes`), donc la prod dit d'où viennent ses courbes.
+  memoire.jalon(`prix agreges (${agg.size} items suivis, courbes : ${sourceCourbes})`);
 
   const bl = new Map();
   for (const b of baselines) bl.set(b.veve_uuid || b.uuid, b);
@@ -765,7 +776,16 @@ async function construireDataset() {
     const uuid = c.uuid || c.veve_uuid;
     if (!uuid) continue;
     const a = agg.get(uuid);
-    if (!a || a.n < MIN_POINTS) { refusesSeuil++; continue; }   // <<< SEUIL : pas de page creuse
+    // 📈 28/11/2026 — UNE FICHE DÉJÀ PUBLIÉE NE TOMBE PAS PAR LE SEUIL.
+    //   Le floor du jour (`floors-jour`) n'écrit qu'aux CHANGEMENTS de jour :
+    //   une pièce stable a moins de lignes qu'avec `prices`. Mesuré le 28/11 :
+    //   195 fiches gelées passaient sous 8 et leurs ADRESSES disparaissaient
+    //   (ensemble collant rompu). ⭐ Le seuil ne vaut que pour les ENTRANTES ;
+    //   une gelée garde sa page dès 1 point (prix jamais changé : une seule
+    //   ligne). Le repli de `floor` plus bas lit le DERNIER point, présent dès
+    //   1 ; la courbe, elle, n'est déposée qu'à partir de 2 (`cote.mjs`).
+    const seuil = pinned[uuid] ? 1 : MIN_POINTS;
+    if (!a || a.n < seuil) { refusesSeuil++; continue; }   // <<< SEUIL : pas de page creuse
     // 🕰️ LOT 217 — l'observation de CETTE pièce, avant que `agg` soit libéré.
     // ⭐ `a.tail` porte les tout derniers points, quel que soit leur âge :
     //   c'est exactement le « dernier changement » auquel le catalogue doit
@@ -796,6 +816,17 @@ async function construireDataset() {
     const byTs = (x, y) => String(x.ts).localeCompare(String(y.ts));
     const spread = [...a.buckets.values()].sort(byTs);
     const publicHist = spread.length >= 2 ? spread : [...a.tail].sort(byTs);
+    // 📈 28/11/2026 — UNE FICHE GELÉE DONT LE FLOOR DU JOUR N'A JAMAIS CHANGÉ.
+    //   `floors-jour` n'écrit qu'aux changements : un prix stable depuis sa
+    //   sortie tient en UNE ligne, et la page tombait (5 adresses mesurées).
+    //   ⭐ Le point ajouté n'est PAS inventé : c'est la même valeur, datée du
+    //   jour où le catalogue l'a vue (`CAT_VU`) — « inchangé depuis ». Seulement
+    //   pour une gelée, et seulement si cette date est plus récente.
+    if (pinned[uuid] && publicHist.length === 1 && Number.isFinite(CAT_VU)) {
+      const seul = publicHist[0];
+      const vuIso = new Date(CAT_VU * 1000).toISOString();
+      if (Date.parse(vuIso) > Date.parse(seul.ts)) publicHist.push({ ...seul, ts: vuIso });
+    }
     if (publicHist.length < 2) { refusesSeuil++; continue; }    // courbe illisible = pas de page
     const b = bl.get(uuid) || {};
     const item = {
