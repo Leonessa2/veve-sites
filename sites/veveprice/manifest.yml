@@ -129,7 +129,10 @@ publication:
   #    ⛔ Surtout pas le plancher StackR, qui est en OMI : ce sont deux marchés,
   #    et 5 000 n'y veut pas dire la même chose.
   outlier_price: 5000        # au-dessus de ce plancher en $, la pièce est examinée
-  outlier_listings: 2        # ...si au plus ce nombre d'offres la porte (0 compris)
+  # 🔴 28/11/2026 — `outlier_listings` RETIRÉ : le nombre d'offres sera publié
+  # vide (`CONTRAT.md`, section 2). Sans passé pour la défendre, une pièce est
+  # écartée au-dessus de ce montant (seuil « suspect » du contrat, 3.2).
+  outlier_unsupported_max: 15000
   # ⭐ LE TROISIÈME EST À MOI, ET IL EST LÀ POUR SAUVER DE VRAIES PIÈCES.
   # Mesuré le 25/08 sur 13 630 pièces : les deux règles ci-dessus SEULES
   # emportaient `Amazing Fantasy` (8 888 $, sa médiane depuis 592 relevés) et

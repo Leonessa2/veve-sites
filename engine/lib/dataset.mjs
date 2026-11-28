@@ -21,7 +21,7 @@ import * as memoire from './memoire.mjs';
 import { deposerVignettes } from './vignettes.mjs';
 import { deposerSetsMcp } from './sets_mcp.mjs';
 import { deposerRayonIndex } from './rayon_index.mjs';
-import { getCatalogue, getBaselines, getReleves, getFichesStackr, getOmiUsd, getVentes, getExtremesStackr, streamPrices, vuLe } from '../data/warehouse.mjs';
+import { getCatalogue, getBaselines, getReleves, getFichesStackr, getOmiUsd, getVentes, getExtremesStackr, streamPrices, sourceCourbes, vuLe } from '../data/warehouse.mjs';
 // 💱 LOT 181 — le cours OMI → USD, déposé dans la réserve pour `/api/cote/lot`.
 //    Toute la règle (péremption, refus du zéro) vit dans le module ; ici il
 //    n'y a qu'un chargement et un dépôt.
@@ -539,11 +539,11 @@ async function construireDataset() {
     return Number.isFinite(n) && n >= 0 ? n : defaut;
   };
   const ECART_PRIX   = nbReglage(pub.outlier_price, 5000);
-  const ECART_OFFRES = nbReglage(pub.outlier_listings, 2);
+  const ECART_HAUT   = nbReglage(pub.outlier_unsupported_max, 15000);
   const ECART_POINTS = nbReglage(pub.outlier_min_points, 20);
   // ⭐ UN SEUL OBJET, PASSÉ À LA RÈGLE. Quatre arguments positionnels auraient
   //   fini par s'inverser — et deux d'entre eux sont des nombres du même ordre.
-  const SEUILS_ECART = { prix: ECART_PRIX, offres: ECART_OFFRES,
+  const SEUILS_ECART = { prix: ECART_PRIX, haut: ECART_HAUT,
                          points: ECART_POINTS, facteur: FACTEUR_ABERRANT };
   const CHANGE = { minPoints: 5, minRef: 1, maxAbs: 300 };
 
@@ -617,9 +617,24 @@ async function construireDataset() {
     memoire.pointDeBoucle('lecture des prix');
     const u = cols[idx.uuid];
     if (!u || !known.has(u)) return;   // on ignore ce qui n'est pas au catalogue
-    const f = Number(cols[idx.floor]);
-    if (!Number.isFinite(f)) return;
-    const ts = cols[idx.ts];
+    // 🔴 28/11/2026 — « FLOOR VIDE = PAS DE POINT » (brouillon de `CONTRAT.md`,
+    //   section 3.1 : « pas d'offre = case vide, jamais 0 »). `Number('')`
+    //   vaut 0 : une case vide devenait un point à 0 $, la courbe plongeait.
+    //   `numRenseigne` rend `null` pour une case vide ou illisible ; la ligne
+    //   est alors ignorée (ni point, ni compte de relevés). Un vrai 0 écrit par
+    //   le Scrapeur reste lu tel quel (le contrat l'interdit, il le refusera).
+    const f = numRenseigne(cols[idx.floor]);
+    if (f === null) return;
+    // 📈 28/11/2026 — LE FLOOR DU JOUR (`floors-jour`, `CONTRAT.md` 3.7).
+    //   ⭐ Un jour SUSPECT n'est pas tracé (RESEAU, règle 7 : « un trou, pas un
+    //   pic ») : ni point, ni compte de relevés. ⚠️ Le fichier n'écrit qu'aux
+    //   changements : la courbe relie le dernier jour sain au suivant, elle ne
+    //   montre pas de blanc (un vrai blanc demande de retoucher le graphique,
+    //   chantier 4 à part).
+    //   La ligne porte une DATE : on la lit à minuit UTC. `prices` (secours)
+    //   garde son horodatage, inchangé (`idx.date` n'y existe pas).
+    if (idx.suspect >= 0 && String(cols[idx.suspect] ?? '').trim() !== '') return;
+    const ts = idx.date >= 0 ? `${cols[idx.date]}T00:00:00Z` : cols[idx.ts];
     let a = agg.get(u);
     if (!a) { a = { n: 0, first: ts, buckets: new Map(), tail: [] }; agg.set(u, a); }
     a.n++;
@@ -650,7 +665,9 @@ async function construireDataset() {
     }
   });
 
-  memoire.jalon(`prix agreges (${agg.size} items suivis)`);
+  // ⭐ La source des courbes est ÉCRITE dans le jalon : `/api/sante` la sert
+  //   (`memoire.etapes`), donc la prod dit d'où viennent ses courbes.
+  memoire.jalon(`prix agreges (${agg.size} items suivis, courbes : ${sourceCourbes})`);
 
   const bl = new Map();
   for (const b of baselines) bl.set(b.veve_uuid || b.uuid, b);
@@ -759,7 +776,16 @@ async function construireDataset() {
     const uuid = c.uuid || c.veve_uuid;
     if (!uuid) continue;
     const a = agg.get(uuid);
-    if (!a || a.n < MIN_POINTS) { refusesSeuil++; continue; }   // <<< SEUIL : pas de page creuse
+    // 📈 28/11/2026 — UNE FICHE DÉJÀ PUBLIÉE NE TOMBE PAS PAR LE SEUIL.
+    //   Le floor du jour (`floors-jour`) n'écrit qu'aux CHANGEMENTS de jour :
+    //   une pièce stable a moins de lignes qu'avec `prices`. Mesuré le 28/11 :
+    //   195 fiches gelées passaient sous 8 et leurs ADRESSES disparaissaient
+    //   (ensemble collant rompu). ⭐ Le seuil ne vaut que pour les ENTRANTES ;
+    //   une gelée garde sa page dès 1 point (prix jamais changé : une seule
+    //   ligne). Le repli de `floor` plus bas lit le DERNIER point, présent dès
+    //   1 ; la courbe, elle, n'est déposée qu'à partir de 2 (`cote.mjs`).
+    const seuil = pinned[uuid] ? 1 : MIN_POINTS;
+    if (!a || a.n < seuil) { refusesSeuil++; continue; }   // <<< SEUIL : pas de page creuse
     // 🕰️ LOT 217 — l'observation de CETTE pièce, avant que `agg` soit libéré.
     // ⭐ `a.tail` porte les tout derniers points, quel que soit leur âge :
     //   c'est exactement le « dernier changement » auquel le catalogue doit
@@ -790,6 +816,17 @@ async function construireDataset() {
     const byTs = (x, y) => String(x.ts).localeCompare(String(y.ts));
     const spread = [...a.buckets.values()].sort(byTs);
     const publicHist = spread.length >= 2 ? spread : [...a.tail].sort(byTs);
+    // 📈 28/11/2026 — UNE FICHE GELÉE DONT LE FLOOR DU JOUR N'A JAMAIS CHANGÉ.
+    //   `floors-jour` n'écrit qu'aux changements : un prix stable depuis sa
+    //   sortie tient en UNE ligne, et la page tombait (5 adresses mesurées).
+    //   ⭐ Le point ajouté n'est PAS inventé : c'est la même valeur, datée du
+    //   jour où le catalogue l'a vue (`CAT_VU`) — « inchangé depuis ». Seulement
+    //   pour une gelée, et seulement si cette date est plus récente.
+    if (pinned[uuid] && publicHist.length === 1 && Number.isFinite(CAT_VU)) {
+      const seul = publicHist[0];
+      const vuIso = new Date(CAT_VU * 1000).toISOString();
+      if (Date.parse(vuIso) > Date.parse(seul.ts)) publicHist.push({ ...seul, ts: vuIso });
+    }
     if (publicHist.length < 2) { refusesSeuil++; continue; }    // courbe illisible = pas de page
     const b = bl.get(uuid) || {};
     const item = {
@@ -907,8 +944,14 @@ async function construireDataset() {
       // Un catalogue qui renvoie 0 veut dire « je ne sais pas », pas « zero ».
       // `??` ne rattrape PAS un 0 : la fiche affichait « plus haut historique : 0 »
       // juste au-dessus d'un prix a 42 000 milliards.
-      ath: pos(c.ath) ?? pos(b.floor_max),
-      atl: pos(c.atl) ?? pos(b.floor_min),
+      // 🔴 28/11/2026 — « ATH/ATL VIDE = RIEN D'AFFICHÉ » (brouillon de
+      //   `CONTRAT.md`, section 3.3). Le repli sur `floor_max` / `floor_min` des
+      //   baselines est RETIRÉ : ces colonnes ne sont pas filtrées (mesuré le
+      //   26/11 : 999 999 999, 168 000 000), et le Scrapeur laisse désormais
+      //   l'ATH vide exprès quand aucun floor du jour n'est valide. Vide ⇒
+      //   `null` ⇒ les gabarits n'affichent rien.
+      ath: pos(c.ath),
+      atl: pos(c.atl),
       // 📅 Les dates des extrêmes. ⭐ Sans elles, « plus haut : 1 750 » ne dit
       // pas QUAND — et c'est la date qui transforme un nombre en information.
       // ⚠️ Repli sur les bornes de la baseline si le catalogue ne les a pas :
@@ -1969,7 +2012,7 @@ async function construireDataset() {
   //   tient : aucun montant ne sort d'ici.
   const candidatsEcart = items.filter((i) => Number(i.floor) > ECART_PRIX).length;
   console.log(`[vitrine] planchers ecartes du marche : ${ecartes} sur ${items.length} `
-    + `(> ${ECART_PRIX} avec <= ${ECART_OFFRES} offre(s) SI son passe ne peut pas la defendre, `
+    + `(> ${ECART_HAUT} SI son passe ne peut pas la defendre, `
     + `ou plus de ${FACTEUR_ABERRANT}x sa mediane DANS TOUS LES CAS) — reaffichables par la case « ${'prix non retenus'} »`
     + ` · ${candidatsEcart} piece(s) EXAMINEE(S) (plancher > ${ECART_PRIX})`
     + `${candidatsEcart && !ecartes ? ' 🔴 EXAMINEES SANS AUCUNE RETENUE — la regle ne mord plus' : ''}`);

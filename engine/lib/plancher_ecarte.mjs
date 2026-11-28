@@ -47,6 +47,19 @@
 //
 // @param i       une fiche portant `floor`, `listings`, `totalPoints`, `prixMedian`
 // @param seuils  { prix, offres, points, facteur } — tous requis, aucun deviné
+// ═══════════════════════════════════════════════════════════════════════════
+// 🔴🔴🔴 28/11/2026 — LE GARDE-FOU NE DÉPEND PLUS DU CARNET D'OFFRES
+// ═══════════════════════════════════════════════════════════════════════════
+// Le brouillon de `CONTRAT.md` (section 2) publie `listings` VIDE pour toutes
+// les fiches tant qu'aucune source fiable ne le mesure. Le motif « muet »
+// exigeait « au plus 2 offres » : avec des offres toutes inconnues, il ne
+// mordait plus jamais, et un 9 999 999 $ à relevé unique repassait.
+// ⭐ RÈGLE NOUVELLE (tranchée par Claude, 28/11) : quand le passé de la pièce
+//   ne peut pas la défendre (moins de `points` relevés, ou pas de médiane), le
+//   plancher est écarté s'il dépasse `haut` — 15 000 $, le seuil « suspect »
+//   du contrat (section 3.2). Entre `prix` (5 000 $) et `haut`, la pièce est
+//   servie : une pièce neuve et chère n'est pas un farceur.
+// ⭐ « SON PASSÉ LA CONTREDIT » (× `facteur` la médiane) est inchangé.
 export function planchierEcarte(i, seuils) {
   if (!i || !seuils) return false;
   // ⛔ `Number.isFinite` ET PAS UNE VÉRITÉ : `listings: 0` est une VRAIE valeur,
@@ -54,10 +67,6 @@ export function planchierEcarte(i, seuils) {
   //    personne ne porte. Un `if (i.listings)` l'aurait laissé passer.
   // ⛔ ET PAS `Number(null)` : il vaut 0. Une offre inconnue (`null`, case
   //    vide) resterait sinon comptée comme « zéro offre » (27/11/2026).
-  const brut = i.listings;
-  const offres = (brut === null || brut === undefined || String(brut).trim() === '')
-    ? null
-    : (Number.isFinite(Number(brut)) ? Number(brut) : null);
   const floor = Number(i.floor);
   if (!Number.isFinite(floor) || floor <= seuils.prix) return false;
 
@@ -65,12 +74,11 @@ export function planchierEcarte(i, seuils) {
   const releves = Number(i.totalPoints);
   const medianeUtilisable = Number.isFinite(mediane) && mediane > 0;
 
-  // ⭐ « SON PASSÉ NE PEUT PAS LA DÉFENDRE » — le carnet d'offres reste le
-  //   garde-fou, parce qu'il est la SEULE information qui reste quand
-  //   l'historique est absent. ⛔ `offres === null` (compteur non renseigné)
-  //   n'est PAS zéro : on ne sait pas, donc on ne condamne pas sur ce motif.
-  const muet = (!(releves >= seuils.points) || !medianeUtilisable)
-            && offres !== null && offres <= seuils.offres;
+  // ⭐ « SON PASSÉ NE PEUT PAS LA DÉFENDRE » — jugé sur le seul montant
+  //   (au-dessus de `haut`), plus jamais sur le nombre d'offres (28/11/2026).
+  //   ⛔ `haut` absent ou illisible ⇒ 15 000 $ : ne jamais éteindre le motif.
+  const haut = Number.isFinite(Number(seuils.haut)) && Number(seuils.haut) > 0 ? Number(seuils.haut) : 15000;
+  const muet = (!(releves >= seuils.points) || !medianeUtilisable) && floor > haut;
 
   // ⭐⭐ « SON PASSÉ LA CONTREDIT » — INCONDITIONNEL. C'est tout le lot 223.
   const dement = medianeUtilisable && floor > mediane * seuils.facteur;

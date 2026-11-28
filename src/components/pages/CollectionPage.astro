@@ -92,7 +92,7 @@ const titreCollection = [...nu(brutCollection)].length <= TITLE_BUDGET
     ) : (
       <>
         <div class="stat"><div class="etiq">{t(lang, 'movers.floor')}</div><div class="stat__v">{money(Math.min(...items.map((i) => i.floor ?? Infinity)))}</div></div>
-        <div class="stat"><div class="etiq">{t(lang, 'item.high')}</div><div class="stat__v">{money(Math.max(...items.map((i) => i.ath ?? 0)))}</div></div>
+        <div class="stat"><div class="etiq">{t(lang, 'item.high')}</div><div class="stat__v">{(() => { const v = items.map((i) => i.ath).filter((x) => Number.isFinite(x) && x > 0); return v.length ? money(Math.max(...v)) : '—'; })()}</div></div>
       </>
     )}
   </div>

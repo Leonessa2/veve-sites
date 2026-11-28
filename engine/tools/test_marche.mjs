@@ -1106,7 +1106,7 @@ console.log('\n9. la projection porte-t-elle tout ce que la page LIT ?');
 console.log('\n10. le plancher écarté (lot 193) ?');
 {
   const { planchierEcarte } = await import('../lib/plancher_ecarte.mjs');
-  const S = { prix: 5000, offres: 2, points: 20, facteur: 10 };
+  const S = { prix: 5000, haut: 15000, points: 20, facteur: 10 };
 
   // ⭐ LES CAS VIENNENT DE LA MESURE DU 25/08 SUR L'ENTREPÔT, pas d'une
   //   intuition : chaque ligne est une pièce réelle, nommée, dont on sait ce
@@ -1160,10 +1160,21 @@ console.log('\n10. le plancher écarté (lot 193) ?');
     planchierEcarte({ floor: 9999999, listings: 0,  totalPoints: 34, prixMedian: 44.5 }, S) === true
     && planchierEcarte({ floor: 9999999, listings: 99, totalPoints: 34, prixMedian: 44.5 }, S) === true,
     '×224 000 est faux avec 0 annonce comme avec 99');
-  verifie('⛔ « son passé ne peut PAS la défendre » en dépend, lui, et le garde',
-    planchierEcarte({ floor: 9e6, listings: 1,  totalPoints: 1, prixMedian: 9e6 }, S) === true
-    && planchierEcarte({ floor: 9e6, listings: 99, totalPoints: 1, prixMedian: 9e6 }, S) === false,
-    'sans historique, un carnet fourni est le seul indice qu\'un prix est porté');
+  // 🔴 28/11/2026 — LE CARNET D'OFFRES NE COMMANDE PLUS RIEN (`CONTRAT.md`,
+  //   section 2 : `listings` publié vide). « Son passé ne peut pas la
+  //   défendre » se juge sur le MONTANT (au-dessus de `haut`, 15 000 $).
+  // 🔬 Contre-épreuve : remettre `&& offres !== null && offres <= seuils.offres`
+  //   fait tomber la première ligne (offre inconnue ⇒ servie à 9 M $).
+  verifie('⛔ sans passé pour la défendre, 9 M $ est écarté QUEL QUE SOIT le carnet',
+    planchierEcarte({ floor: 9e6, totalPoints: 1, prixMedian: 9e6 }, S) === true
+    && planchierEcarte({ floor: 9e6, listings: null, totalPoints: 1, prixMedian: 9e6 }, S) === true
+    && planchierEcarte({ floor: 9e6, listings: 0,  totalPoints: 1, prixMedian: 9e6 }, S) === true
+    && planchierEcarte({ floor: 9e6, listings: 99, totalPoints: 1, prixMedian: 9e6 }, S) === true,
+    'offre inconnue, 0, ou 99 : même verdict');
+  verifie('⛔ sans passé, sous le seuil haut, une pièce neuve et chère est SERVIE',
+    planchierEcarte({ floor: 14000, totalPoints: 1, prixMedian: 14000 }, S) === false
+    && planchierEcarte({ floor: 16000, totalPoints: 1, prixMedian: 16000 }, S) === true,
+    '14 000 $ servi, 16 000 $ écarté (seuil 15 000 $ du contrat)');
 
   // ⛔ LE CAS QUI M'A COÛTÉ UNE ITÉRATION, ISOLÉ POUR QU'IL NE SE REPERDE PAS.
   //   Une pièce à relevé unique a une médiane ÉGALE à son floor : son écart
@@ -1173,22 +1184,18 @@ console.log('\n10. le plancher écarté (lot 193) ?');
     planchierEcarte({ floor: 9999999, listings: 1, totalPoints: 1, prixMedian: 9999999 }, S) === true,
     'le nombre de relevés tranche là où l\'écart est aveugle');
 
-  // ⭐ LE ZÉRO EST UNE VALEUR. `listings: 0` doit MORDRE ; `listings` absent ne
-  //   doit PAS mordre — « personne ne le porte » et « on ne sait pas » sont
-  //   deux états différents, et seul le premier accuse le prix.
-  verifie('⛔ `listings: 0` mord, `listings` absent ne mord pas',
-    planchierEcarte({ floor: 9e6, listings: 0, totalPoints: 1, prixMedian: 9e6 }, S) === true
-    && planchierEcarte({ floor: 9e6, totalPoints: 1, prixMedian: 9e6 }, S) === false,
-    'zéro offre accuse le prix, offre inconnue ne l\'accuse pas');
+  // ⛔ Seuil absent du manifeste ⇒ 15 000 $, jamais « motif éteint ».
+  verifie('⛔ `haut` absent ⇒ 15 000 $ (le motif ne s\'éteint pas)',
+    planchierEcarte({ floor: 9e6, totalPoints: 1, prixMedian: 9e6 }, { prix: 5000, points: 20, facteur: 10 }) === true,
+    'seuils sans `haut`');
 
   // ⭐ LES SEUILS SONT DES ARGUMENTS, PAS DES CONSTANTES CACHÉES : la même
-  //   pièce change de verdict quand le manifeste change d'avis. Sans ce
-  //   contrôle, les trois réglages pourraient être ignorés en silence.
+  //   pièce change de verdict quand le manifeste change d'avis.
   verifie('les seuils viennent bien des arguments (le manifeste décide)',
-    planchierEcarte({ floor: 6000, listings: 1, totalPoints: 5, prixMedian: 5900 }, S) === true
-    && planchierEcarte({ floor: 6000, listings: 1, totalPoints: 5, prixMedian: 5900 },
-                       { ...S, prix: 100000 }) === false,
-    'relever `outlier_price` à 100 000 rend la même pièce saine');
+    planchierEcarte({ floor: 6000, totalPoints: 5, prixMedian: 5900 }, S) === false
+    && planchierEcarte({ floor: 6000, totalPoints: 5, prixMedian: 5900 }, { ...S, haut: 5500 }) === true
+    && planchierEcarte({ floor: 6000, totalPoints: 5, prixMedian: 5900 }, { ...S, haut: 5500, prix: 100000 }) === false,
+    '`haut` à 5 500 écarte la pièce ; `outlier_price` à 100 000 la rend saine');
 
   // ── le filtre de la page ────────────────────────────────────────────────
   const SEL = await import('../lib/marche_selection.mjs');
@@ -1263,10 +1270,10 @@ console.log('\n10. le plancher écarté (lot 193) ?');
   //   sûr, il est non mesuré.
   const man = readFileSync(join(ROOT, 'sites/veveprice/manifest.yml'), 'utf8')
     .split('\n').filter((l) => !/^\s*#/.test(l)).join('\n');
-  const regles = ['outlier_price', 'outlier_listings', 'outlier_min_points']
+  const regles = ['outlier_price', 'outlier_unsupported_max', 'outlier_min_points']
     .filter((k) => !new RegExp(`^\\s*${k}\\s*:\\s*\\d`, 'm').test(man));
   verifie('les trois seuils sont écrits dans le manifeste, pas seulement en repli',
-    regles.length === 0, regles.length ? `🔴 absents : ${regles.join(', ')}` : '5000 / 2 / 20');
+    regles.length === 0, regles.length ? `🔴 absents : ${regles.join(', ')}` : '5000 / 15000 / 20');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
